@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block tieu_de %}bd03 - Hệ khuyến nghị{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css?v={{ phien_ban_tinh }}">
+  <script src="/static/vendor/chart.umd.min.js?v=4.6.1"></script>
+  <script src="/static/bieu_do.js?v={{ phien_ban_tinh }}"></script>
+</head>
+<body>
+{% set duong = request.url.path if request else "/" %}
+<header class="dau">
+  <div class="dau-trong">
+    <a class="thuong-hieu" href="/">
+      <span class="logo-o">bd03</span>
+      <span class="thuong-hieu-chu">Sàn TMĐT giả lập<small>Hệ khuyến nghị sản phẩm · CS411V</small></span>
+    </a>
+    <nav>
+      <a href="/" class="{{ 'dang-mo' if duong == '/' or duong.startswith('/san-pham') }}">Trang chủ</a>
+      <a href="/ab" class="{{ 'dang-mo' if duong == '/ab' }}">Bảng điều khiển A/B</a>
+      <a href="/mo-hinh" class="{{ 'dang-mo' if duong == '/mo-hinh' }}">Chất lượng mô hình</a>
+      <a href="/tai-lap" class="{{ 'dang-mo' if duong == '/tai-lap' }}">Tái lập thí nghiệm</a>
+    </nav>
+  </div>
+</header>
+{% if gia_lap %}
+<div class="canh-bao">Đang chạy với DỮ LIỆU GIẢ LẬP (WEB_CHE_DO=gia). Số liệu trên trang không phải kết quả thật của đề tài.</div>
+{% endif %}
+<main>
+{% block noi_dung %}{% endblock %}
+</main>
+<footer>
+  <div>Đề tài 3 · CS411V Dữ liệu lớn · Trường Đại học Tân Tạo</div>
+  <div class="mo">Dữ liệu RetailRocket đã ẩn danh: tên ngành hàng, tên hiển thị và ảnh sản phẩm là <b>minh họa</b>,
+    gán cố định theo cây danh mục; giá là thuộc tính 790 đã ẩn danh, chỉ có ý nghĩa so sánh.</div>
+</footer>
+</body>
+</html>

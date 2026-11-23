@@ -1,0 +1,36 @@
+# Spark Master: chạy trên labsoe-11 (10.68.71.113).
+# Giữ nguyên tên container spark-master và cách mount ./jobs như repo spark-cluster.
+#
+# network_mode: host vì Master phải quảng bá đúng địa chỉ spark://10.68.71.113:7077. Trong mạng
+# bridge với --host 0.0.0.0, Master tự quảng bá spark://0.0.0.0:7077 và worker không nối lại
+# được (lỗi gặp ngày 10/11/2026). Driver của mọi job cũng chạy trong container này (submit.sh
+# dùng docker exec), nên các cổng driver 4041-4060 và Spark UI 4140-4150 mở thẳng trên máy.
+name: spark-cluster
+
+services:
+  spark-master:
+    build: .
+    image: bd03/spark:3.5.3
+    container_name: spark-master
+    network_mode: host
+    command: >
+      /opt/spark/bin/spark-class
+      org.apache.spark.deploy.master.Master
+      --host ${NODE_IP:-10.68.71.113}
+      --port 7077
+      --webui-port 8080
+    environment:
+      SPARK_MASTER_HOST: ${NODE_IP:-10.68.71.113}
+      SPARK_MASTER_PORT: 7077
+      SPARK_MASTER_WEBUI_PORT: 8080
+      # Tiến trình Master chỉ điều phối, 512 MB là đủ (mặc định 1 GB).
+      SPARK_DAEMON_MEMORY: 512m
+      HDFS_GOC: ${HDFS_GOC:-hdfs://10.68.71.113:8020}
+      KAFKA_BROKER: ${KAFKA_BROKER:-10.68.71.204:9092}
+    volumes:
+      - ../../jobs:/opt/spark/jobs
+      - spark_ivy:/tmp/.ivy2
+    restart: unless-stopped
+
+volumes:
+  spark_ivy:

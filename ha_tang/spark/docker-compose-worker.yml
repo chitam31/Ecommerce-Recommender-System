@@ -1,0 +1,26 @@
+# Spark Worker: chạy trên từng máy lab. NODE_IP, SO_LOI, BO_NHO lấy từ tệp .env do
+# scripts/cum/khoi_dong_may.sh sinh ra theo danh bạ cau_hinh/cum.env.
+# Bản cũ ghi cứng --host 10.68.71.114, địa chỉ này không thuộc máy nào trong ZeroTier.
+name: spark-cluster
+
+services:
+  spark-worker:
+    build: .
+    image: bd03/spark:3.5.3
+    container_name: spark-worker
+    network_mode: host
+    command: >
+      /opt/spark/bin/spark-class
+      org.apache.spark.deploy.worker.Worker
+      spark://${SPARK_MASTER_IP:-10.68.71.113}:7077
+      --host ${NODE_IP:?Thieu NODE_IP}
+      --port 7078
+      --webui-port 8081
+      --cores ${SO_LOI:-4}
+      --memory ${BO_NHO:-8g}
+    environment:
+      SPARK_LOCAL_IP: ${NODE_IP:?Thieu NODE_IP}
+      SPARK_PUBLIC_DNS: ${NODE_IP:?Thieu NODE_IP}
+      # Tiến trình Worker chỉ quản lý executor; RAM cho tính toán là --memory ở trên.
+      SPARK_DAEMON_MEMORY: 512m
+    restart: unless-stopped

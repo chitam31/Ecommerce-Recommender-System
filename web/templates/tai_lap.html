@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block noi_dung %}
+<section class="hop">
+  <h1>Tái lập thí nghiệm</h1>
+  <p>Mỗi kết quả A/B được ghi kèm <code>phien_ban_delta_du_lieu</code> của impression log đã đọc.
+    Bấm <b>Chạy lại</b>: web đọc lại đúng phiên bản đó bằng <code>VERSION AS OF</code>, chạy lại cùng hàm tổng hợp và kiểm định,
+    rồi đặt kết quả cũ cạnh kết quả mới. Cột "phiên bản hiện tại" cho thấy nếu KHÔNG dùng time travel thì số liệu sẽ khác khi log đã có thêm dữ liệu.
+    Mỗi lần chạy lại được <b>ghi ngược vào Delta</b> <code>gold.ket_qua_tai_lap</code> (loại <code>ab_web</code>, bảng cuối trang).</p>
+  <table>
+    <tr><th>Ngày</th><th>Phiên bản Delta của dữ liệu</th><th></th></tr>
+    {% for ngay, pb in cac_ngay %}
+    <tr><td>{{ ngay }}</td><td>{{ pb }}</td><td><button onclick="chayLai('{{ ngay }}')">Chạy lại</button></td></tr>
+    {% endfor %}
+  </table>
+  <div id="ket-qua-tai-lap"></div>
+</section>
+<section class="hop">
+  <h2>Tái lập huấn luyện mô hình (DAG kn_tai_lap) và lịch sử tái lập</h2>
+  <p>Chạy lại toàn bộ tuning + đánh giá trên features <code>VERSION AS OF</code> đã ghi trong lịch sử. Job nặng nên chạy qua Airflow.</p>
+  <div class="hang">
+    <select id="pb-features">
+      {% for d in lich_su|reverse %}<option value="{{ d.phien_ban_features }}">features v{{ d.phien_ban_features }} · {{ d.phien_ban_mo_hinh }} · NDCG {{ "%.4f"|format(d.ndcg_at_10) }}</option>{% endfor %}
+    </select>
+    <button onclick="kichHoatDag()">Kích hoạt kn_tai_lap</button>
+  </div>
+  <div id="ket-qua-dag" class="mo"></div>
+  <table>
+    <tr><th>Thời điểm</th><th>Loại</th><th>Khóa</th><th>Phiên bản</th><th>Lệch lớn nhất</th><th>Trùng khớp</th></tr>
+    {% for d in tai_lap_mo_hinh|reverse %}
+    <tr><td>{{ d.thoi_diem }}</td><td>{{ d.loai }}</td><td>{{ d.khoa }}</td><td>{{ d.phien_ban_delta }}</td>
+      <td>{{ "%.2e"|format(d.lech_lon_nhat) }}</td><td>{{ "CÓ" if d.trung_khop else "KHÔNG" }}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<script>
+function so(v) { return (v === null || v === undefined) ? "-" : (Number.isInteger(v) ? v : Number(v).toPrecision(6)); }
+async function chayLai(ngay) {
+  const o = document.getElementById("ket-qua-tai-lap");
+  o.textContent = "Đang chạy lại trên VERSION AS OF ...";
+  const r = await fetch("/api/tai-lap/" + ngay, {method: "POST"});
+  const d = await r.json();
+  if (!r.ok) { o.textContent = d.detail || "Lỗi"; return; }
+  const hienTai = {};
+  (d.phien_ban_hien_tai || []).forEach(x => hienTai[x.nhom_ab] = x);
+  let h = "<h3>Ngày " + d.ngay + " · VERSION AS OF " + d.phien_ban_delta_du_lieu + " · " + d.so_giay + " giây · " +
+          (d.trung_khop ? "<span class='dat'>TRÙNG KHỚP</span>" : "<span class='khong-dat'>LỆCH " + d.lech_lon_nhat + "</span>") + "</h3>";
+  h += "<table><tr><th>Nhóm</th><th>Chỉ số</th><th>Kết quả cũ</th><th>Chạy lại</th><th>Lệch</th><th>Phiên bản hiện tại (không time travel)</th></tr>";
+  d.so_sanh.forEach(x => {
+    const ht = hienTai[x.nhom_ab] ? hienTai[x.nhom_ab][x.chi_so] : null;
+    h += "<tr><td>" + x.nhom_ab + "</td><td>" + x.chi_so + "</td><td>" + so(x.cu) + "</td><td>" + so(x.moi) + "</td><td>" + so(x.lech) + "</td><td>" + so(ht) + "</td></tr>";
+  });
+  if (d.ghi_delta) h += "<p class='mo'>Đang ghi kết quả vào Delta " + d.ghi_delta.bang + " (loại " + d.ghi_delta.loai +
+                        "). Tải lại trang sau vài giây để thấy dòng mới ở bảng cuối trang.</p>";
+  o.innerHTML = h + "</table>";
+}
+async function kichHoatDag() {
+  const pb = document.getElementById("pb-features").value;
+  const r = await fetch("/api/tai-lap-mo-hinh?phien_ban_delta=" + pb, {method: "POST"});
+  document.getElementById("ket-qua-dag").textContent = JSON.stringify(await r.json());
+}
+</script>
+{% endblock %}

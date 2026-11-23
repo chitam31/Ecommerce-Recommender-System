@@ -1,0 +1,73 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-23T08:08:18Z"
+ },
+ "lists": "css",
+ "title": "BD03 Recommender System – Defence",
+ "cover": "cover",
+ "order": [
+  "cover",
+  "assignment",
+  "criteria",
+  "dataset",
+  "cluster",
+  "architecture",
+  "streaming",
+  "dags",
+  "loop",
+  "lakehouse",
+  "airflow",
+  "als",
+  "tuning",
+  "baselines",
+  "errors",
+  "bias",
+  "rerank",
+  "coldstart",
+  "abtest",
+  "delta",
+  "zorder",
+  "reproduce",
+  "v2",
+  "operations",
+  "results",
+  "limits",
+  "thanks",
+  "backup"
+ ],
+ "sections": {
+  "s1": {
+   "description": "The assignment, its objectives and the eight acceptance criteria",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Dataset, architecture, cluster, lakehouse, streaming and orchestration",
+   "start": "dataset"
+  },
+  "s3": {
+   "description": "ALS, tuning, baselines, popularity bias, re-ranking and cold start",
+   "start": "als"
+  },
+  "s4": {
+   "description": "A/B test and the Delta Lake features: Z-ORDER, time travel, schema evolution",
+   "start": "abtest"
+  },
+  "s5": {
+   "description": "The live closed loop and lessons from operating the cluster",
+   "start": "loop"
+  },
+  "s6": {
+   "description": "Results against the criteria, limitations and future work",
+   "start": "results"
+  }
+ },
+ "faces": {
+  "tinos": {
+   "family": "Tinos",
+   "href": "https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+  }
+ },
+ "designSystems": []
+}

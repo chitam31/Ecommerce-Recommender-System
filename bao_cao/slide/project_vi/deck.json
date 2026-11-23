@@ -1,0 +1,73 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-23T08:08:18Z"
+ },
+ "lists": "css",
+ "title": "BD03 Hệ thống gợi ý – Bảo vệ đồ án",
+ "cover": "cover",
+ "order": [
+  "cover",
+  "assignment",
+  "criteria",
+  "dataset",
+  "cluster",
+  "architecture",
+  "streaming",
+  "dags",
+  "loop",
+  "lakehouse",
+  "airflow",
+  "als",
+  "tuning",
+  "baselines",
+  "errors",
+  "bias",
+  "rerank",
+  "coldstart",
+  "abtest",
+  "delta",
+  "zorder",
+  "reproduce",
+  "v2",
+  "operations",
+  "results",
+  "limits",
+  "thanks",
+  "backup"
+ ],
+ "sections": {
+  "s1": {
+   "description": "Đề bài, mục tiêu và tám tiêu chí nghiệm thu",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Dữ liệu, kiến trúc, cụm, lakehouse, xử lý luồng và điều phối",
+   "start": "dataset"
+  },
+  "s3": {
+   "description": "ALS, tinh chỉnh, baseline, phân tích lỗi, thiên lệch độ phổ biến, xếp lại và khởi đầu lạnh",
+   "start": "als"
+  },
+  "s4": {
+   "description": "Thử nghiệm A/B và các tính năng Delta Lake: Z-ORDER, time travel, schema evolution",
+   "start": "abtest"
+  },
+  "s5": {
+   "description": "Vòng khép kín chạy thật và bài học vận hành cụm",
+   "start": "loop"
+  },
+  "s6": {
+   "description": "Kết quả theo tiêu chí, hạn chế và hướng phát triển",
+   "start": "results"
+  }
+ },
+ "faces": {
+  "tinos": {
+   "family": "Tinos",
+   "href": "https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+  }
+ },
+ "designSystems": []
+}

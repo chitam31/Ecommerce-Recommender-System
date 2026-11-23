@@ -1,0 +1,230 @@
+
+# A. DESCRIBE HISTORY các bảng chính (A.6.2)
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac` LIMIT 8
++-------+-----------------------+------------+----------------------------------------------------------------------+------------------------------------------------------+------------+
+|version|timestamp              |operation   |operationParameters                                                   |operationMetrics                                      |userMetadata|
++-------+-----------------------+------------+----------------------------------------------------------------------+------------------------------------------------------+------------+
+|22     |2026-11-15 21:01:09.5  |VACUUM END  |{"status":"COMPLETED"}                                                |{"numDeletedFiles":"0","numVacuumedDirectories":"142"}|NULL        |
+|21     |2026-11-15 21:01:07.349|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}|{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}     |NULL        |
+|20     |2026-11-14 21:01:19.321|VACUUM END  |{"status":"COMPLETED"}                                                |{"numDeletedFiles":"0","numVacuumedDirectories":"142"}|NULL        |
+|19     |2026-11-14 21:01:16.25 |VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}|{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}     |NULL        |
+|18     |2026-11-13 21:01:27.052|VACUUM END  |{"status":"COMPLETED"}                                                |{"numDeletedFiles":"0","numVacuumedDirectories":"142"}|NULL        |
+|17     |2026-11-13 21:01:23.965|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}|{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}     |NULL        |
+|16     |2026-11-12 21:02:00.678|VACUUM END  |{"status":"COMPLETED"}                                                |{"numDeletedFiles":"0","numVacuumedDirectories":"142"}|NULL        |
+|15     |2026-11-12 21:01:57.811|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}|{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}     |NULL        |
++-------+-----------------------+------------+----------------------------------------------------------------------+------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/features/ma_tran_tuong_tac` LIMIT 5
++-------+-----------------------+---------+---------------------------------------+----------------------------------------------------------------------+--------------------------------------------------+
+|version|timestamp              |operation|operationParameters                    |operationMetrics                                                      |userMetadata                                      |
++-------+-----------------------+---------+---------------------------------------+----------------------------------------------------------------------+--------------------------------------------------+
+|4      |2026-11-11 19:10:27.868|WRITE    |{"mode":"Overwrite","partitionBy":"[]"}|{"numFiles":"128","numOutputRows":"779154","numOutputBytes":"8268170"}|{"ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-1|
+|3      |2026-11-10 23:13:09.236|WRITE    |{"mode":"Overwrite","partitionBy":"[]"}|{"numFiles":"128","numOutputRows":"779154","numOutputBytes":"8262523"}|{"ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-1|
+|2      |2026-11-10 22:26:12.076|WRITE    |{"mode":"Overwrite","partitionBy":"[]"}|{"numFiles":"128","numOutputRows":"779154","numOutputBytes":"8264982"}|{"ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-1|
+|1      |2026-11-10 16:45:38.196|WRITE    |{"mode":"Overwrite","partitionBy":"[]"}|{"numFiles":"128","numOutputRows":"779154","numOutputBytes":"8263490"}|{"ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-1|
+|0      |2026-11-10 08:13:43.274|WRITE    |{"mode":"Overwrite","partitionBy":"[]"}|{"numFiles":"128","numOutputRows":"779154","numOutputBytes":"8264158"}|{"ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-1|
++-------+-----------------------+---------+---------------------------------------+----------------------------------------------------------------------+--------------------------------------------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/goi_y_nguoi_dung` LIMIT 6
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|version|timestamp              |operation   |operationParameters                                                      |operationMetrics                                                         |userMetadata|
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|30     |2026-11-15 21:02:18.446|VACUUM END  |{"status":"COMPLETED"}                                                   |{"numDeletedFiles":"0","numVacuumedDirectories":"1"}                     |NULL        |
+|29     |2026-11-15 21:02:16.203|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}   |{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}                        |NULL        |
+|28     |2026-11-15 21:01:36.604|OPTIMIZE    |{"predicate":"[]","zOrderBy":"[\"ma_nguoi_dung\"]","clusterBy":"[]","a...|{"numRemovedFiles":"1","numRemovedBytes":"37770646","p25FileSize":"377...|NULL        |
+|27     |2026-11-14 21:02:39.39 |VACUUM END  |{"status":"COMPLETED"}                                                   |{"numDeletedFiles":"0","numVacuumedDirectories":"1"}                     |NULL        |
+|26     |2026-11-14 21:02:37.338|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}   |{"numFilesToDelete":"0","sizeOfDataToDelete":"0"}                        |NULL        |
+|25     |2026-11-14 21:01:48.646|OPTIMIZE    |{"predicate":"[]","zOrderBy":"[\"ma_nguoi_dung\"]","clusterBy":"[]","a...|{"numRemovedFiles":"1","numRemovedBytes":"37770646","p25FileSize":"377...|NULL        |
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/nhat_ky_hien_thi` LIMIT 5
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|version|timestamp              |operation   |operationParameters                                                      |operationMetrics                                                         |userMetadata|
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|70     |2026-11-15 21:03:58.006|VACUUM END  |{"status":"COMPLETED"}                                                   |{"numDeletedFiles":"0","numVacuumedDirectories":"2"}                     |NULL        |
+|69     |2026-11-15 21:03:56.1  |VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"2592000000"}   |{"numFilesToDelete":"1","sizeOfDataToDelete":"0"}                        |NULL        |
+|68     |2026-11-15 21:03:15.472|OPTIMIZE    |{"predicate":"[]","zOrderBy":"[]","clusterBy":"[]","auto":"false"}       |{"numRemovedFiles":"13","numRemovedBytes":"3504515","p25FileSize":"346...|NULL        |
+|67     |2026-11-15 04:03:14.952|MERGE       |{"predicate":"[\"(ma_hien_thi#58266 = ma_hien_thi#58196)\"]","matchedP...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
+|66     |2026-11-15 03:58:15.47 |MERGE       |{"predicate":"[\"(ma_hien_thi#57218 = ma_hien_thi#57148)\"]","matchedP...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/ket_qua_ab` LIMIT 5
++-------+-----------------------+---------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|version|timestamp              |operation|operationParameters                                                      |operationMetrics                                                         |userMetadata|
++-------+-----------------------+---------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+|11     |2026-11-15 05:00:30.089|MERGE    |{"predicate":"[\"((ngay#1534 = ngay#1512) AND (nhom_ab#1535 = nhom_ab#...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
+|10     |2026-11-15 04:00:30.271|MERGE    |{"predicate":"[\"((ngay#1676 = ngay#1654) AND (nhom_ab#1677 = nhom_ab#...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
+|9      |2026-11-12 15:00:26.892|MERGE    |{"predicate":"[\"((ngay#1508 = ngay#1486) AND (nhom_ab#1509 = nhom_ab#...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
+|8      |2026-11-12 06:00:26.999|MERGE    |{"predicate":"[\"((ngay#1676 = ngay#1654) AND (nhom_ab#1677 = nhom_ab#...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
+|7      |2026-11-11 08:00:39.578|MERGE    |{"predicate":"[\"((ngay#1676 = ngay#1654) AND (nhom_ab#1677 = nhom_ab#...|{"numTargetRowsCopied":"0","numTargetRowsDeleted":"0","numTargetFilesA...|NULL        |
++-------+-----------------------+---------+-------------------------------------------------------------------------+-------------------------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/thinh_hanh_15p` LIMIT 3
++-------+-----------------------+------------+---------------------------------------------------------------------+----------------------------------------------------------+------------+
+|version|timestamp              |operation   |operationParameters                                                  |operationMetrics                                          |userMetadata|
++-------+-----------------------+------------+---------------------------------------------------------------------+----------------------------------------------------------+------------+
+|175    |2026-11-15 21:03:05.465|VACUUM END  |{"status":"COMPLETED"}                                               |{"numDeletedFiles":"11","numVacuumedDirectories":"1"}     |NULL        |
+|174    |2026-11-15 21:03:03.543|VACUUM START|{"retentionCheckEnabled":"true","defaultRetentionMillis":"172800000"}|{"numFilesToDelete":"11","sizeOfDataToDelete":"224528428"}|NULL        |
+|173    |2026-11-14 21:03:31.24 |VACUUM END  |{"status":"COMPLETED"}                                               |{"numDeletedFiles":"83","numVacuumedDirectories":"1"}     |NULL        |
++-------+-----------------------+------------+---------------------------------------------------------------------+----------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/ket_qua_tai_lap` LIMIT 5
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------+------------+
+|version|timestamp              |operation   |operationParameters                                                      |operationMetrics                                             |userMetadata|
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------+------------+
+|3      |2026-11-12 03:34:25.326|WRITE       |{"mode":"Append","partitionBy":"[]"}                                     |{"numFiles":"3","numOutputRows":"2","numOutputBytes":"11888"}|NULL        |
+|2      |2026-11-11 12:55:50.844|WRITE       |{"mode":"Append","partitionBy":"[]"}                                     |{"numFiles":"3","numOutputRows":"2","numOutputBytes":"11876"}|NULL        |
+|1      |2026-11-10 16:27:54.117|WRITE       |{"mode":"Append","partitionBy":"[]"}                                     |{"numFiles":"3","numOutputRows":"2","numOutputBytes":"11731"}|NULL        |
+|0      |2026-11-10 07:53:01.869|CREATE TABLE|{"partitionBy":"[]","clusterBy":"[]","description":null,"isManaged":"f...|{}                                                           |NULL        |
++-------+-----------------------+------------+-------------------------------------------------------------------------+-------------------------------------------------------------+------------+
+
+>> DESCRIBE HISTORY delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/_quarantine/tuong_tac` LIMIT 3
++-------+-----------------------+---------+-----------------------------------------------+-------------------------------------------------------------------------+------------+
+|version|timestamp              |operation|operationParameters                            |operationMetrics                                                         |userMetadata|
++-------+-----------------------+---------+-----------------------------------------------+-------------------------------------------------------------------------+------------+
+|0      |2026-11-15 23:37:25.571|WRITE    |{"mode":"Overwrite","partitionBy":"[\"ngay\"]"}|{"numFiles":"142","numOutputRows":"5315672","numOutputBytes":"45514879...|NULL        |
++-------+-----------------------+---------+-----------------------------------------------+-------------------------------------------------------------------------+------------+
+
+
+# B. Số commit theo thao tác (MERGE INTO, OPTIMIZE, WRITE, STREAMING UPDATE...)
+>> THAO_TAC delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac`
++------------+---------+------------+-------------+
+|operation   |so_commit|tu_phien_ban|den_phien_ban|
++------------+---------+------------+-------------+
+|VACUUM END  |7        |6           |22           |
+|VACUUM START|7        |5           |21           |
+|WRITE       |5        |0           |11           |
+|OPTIMIZE    |2        |4           |12           |
+|MERGE       |1        |2           |2            |
+|ADD COLUMNS |1        |1           |1            |
++------------+---------+------------+-------------+
+
+>> THAO_TAC delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/goi_y_nguoi_dung`
++------------+---------+------------+-------------+
+|operation   |so_commit|tu_phien_ban|den_phien_ban|
++------------+---------+------------+-------------+
+|OPTIMIZE    |9        |3           |28           |
+|VACUUM END  |7        |8           |30           |
+|VACUUM START|7        |7           |29           |
+|MERGE       |6        |1           |15           |
+|WRITE       |1        |2           |2            |
+|CREATE TABLE|1        |0           |0            |
++------------+---------+------------+-------------+
+
+>> THAO_TAC delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/thinh_hanh_15p`
++------------+---------+------------+-------------+
+|operation   |so_commit|tu_phien_ban|den_phien_ban|
++------------+---------+------------+-------------+
+|MERGE       |153      |1           |162          |
+|VACUUM END  |7        |32          |175          |
+|VACUUM START|7        |31          |174          |
+|OPTIMIZE    |5        |30          |168          |
+|DELETE      |3        |163         |171          |
+|CREATE TABLE|1        |0           |0            |
++------------+---------+------------+-------------+
+
+>> THAO_TAC delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/nhat_ky_hien_thi`
++------------+---------+------------+-------------+
+|operation   |so_commit|tu_phien_ban|den_phien_ban|
++------------+---------+------------+-------------+
+|MERGE       |50       |8           |67           |
+|VACUUM END  |7        |5           |70           |
+|VACUUM START|7        |4           |69           |
+|OPTIMIZE    |4        |3           |68           |
+|WRITE       |2        |1           |2            |
+|CREATE TABLE|1        |0           |0            |
++------------+---------+------------+-------------+
+
+>> THAO_TAC delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/ket_qua_ab`
++------------+---------+------------+-------------+
+|operation   |so_commit|tu_phien_ban|den_phien_ban|
++------------+---------+------------+-------------+
+|MERGE       |11       |1           |11           |
+|CREATE TABLE|1        |0           |0            |
++------------+---------+------------+-------------+
+
+
+# C. Time travel: VERSION AS OF so với bản hiện tại
+>> SELECT 'VERSION AS OF 0' AS ban, count(*) AS so_dong FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac` VERSION AS OF 0 UNION ALL SELECT 'hien_tai', count(*) FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac`
++---------------+-------+
+|ban            |so_dong|
++---------------+-------+
+|VERSION AS OF 0|2882479|
+|hien_tai       |2882484|
++---------------+-------+
+
+>> SELECT 'VERSION AS OF 1' AS ban, count(*) AS so_dong, max(phien_ban_delta_du_lieu) AS pb_du_lieu FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/ket_qua_ab` VERSION AS OF 1 UNION ALL SELECT 'hien_tai', count(*), max(phien_ban_delta_du_lieu) FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/ket_qua_ab`
++---------------+-------+----------+
+|ban            |so_dong|pb_du_lieu|
++---------------+-------+----------+
+|VERSION AS OF 1|14     |1         |
+|hien_tai       |19     |67        |
++---------------+-------+----------+
+
+
+# D. Schema evolution: lược đồ silver hiện tại (có gia_san_pham, xep_hang_sao) và ở phiên bản 0
+>> DESCRIBE delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac`
++-----------------------+---------+-------+
+|col_name               |data_type|comment|
++-----------------------+---------+-------+
+|ma_nguoi_dung          |string   |NULL   |
+|ma_san_pham            |string   |NULL   |
+|thoi_diem              |timestamp|NULL   |
+|loai_su_kien           |string   |NULL   |
+|trong_so               |double   |NULL   |
+|ngay                   |date     |NULL   |
+|_nguon                 |string   |NULL   |
+|gia_san_pham           |double   |NULL   |
+|xep_hang_sao           |double   |NULL   |
+|# Partition Information|         |       |
+|# col_name             |data_type|comment|
+|ngay                   |date     |NULL   |
++-----------------------+---------+-------+
+
+>> SELECT * FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac` VERSION AS OF 0 LIMIT 2
++-------------+-----------+-----------------------+------------+--------+----------+--------+
+|ma_nguoi_dung|ma_san_pham|thoi_diem              |loai_su_kien|trong_so|ngay      |_nguon  |
++-------------+-----------+-----------------------+------------+--------+----------+--------+
+|1009265      |450798     |2015-05-27 02:22:43.795|xem         |1.0     |2015-05-27|phat_lai|
+|1022111      |118894     |2015-05-27 17:18:58.343|xem         |1.0     |2015-05-27|phat_lai|
++-------------+-----------+-----------------------+------------+--------+----------+--------+
+
+
+# E. OPTIMIZE / ZORDER: số liệu trước/sau trên truy vấn lấy gợi ý theo user
+>> SELECT giai_doan, so_tep, so_truy_van, round(trung_vi_ms) AS trung_vi_ms, round(p95_ms) AS p95_ms, tep_doc_trung_binh, thoi_diem FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/gold/do_hieu_nang_zorder` ORDER BY thoi_diem
++------------+------+-----------+-----------+-------+------------------+--------------------------+
+|giai_doan   |so_tep|so_truy_van|trung_vi_ms|p95_ms |tep_doc_trung_binh|thoi_diem                 |
++------------+------+-----------+-----------+-------+------------------+--------------------------+
+|truoc_toi_uu|200   |30         |10793.0    |13420.0|200.0             |2026-11-10 09:54:01.269101|
+|sau_optimize|67    |30         |8280.0     |9524.0 |67.0              |2026-11-10 09:58:48.475012|
+|sau_zorder  |55    |30         |980.0      |1387.0 |1.0666666666666667|2026-11-10 10:00:22.585251|
++------------+------+-----------+-----------+-------+------------------+--------------------------+
+
+
+# F. Thống kê làm sạch bronze -> silver (C.3): mỗi dòng bronze ở đúng một nơi
+>> SELECT 'bronze.su_kien' AS bang, count(*) AS so_dong FROM parquet.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/bronze/su_kien` UNION ALL SELECT 'silver.tuong_tac', count(*) FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac` UNION ALL SELECT '_quarantine.tuong_tac', count(*) FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/_quarantine/tuong_tac`
++---------------------+-------+
+|bang                 |so_dong|
++---------------------+-------+
+|bronze.su_kien       |8198159|
+|silver.tuong_tac     |2882484|
+|_quarantine.tuong_tac|5315672|
++---------------------+-------+
+
+>> SELECT ly_do, count(*) AS so_dong, count(DISTINCT ma_nguoi_dung) AS so_nguoi_dung FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/_quarantine/tuong_tac` GROUP BY ly_do ORDER BY so_dong DESC
++---------------+-------+-------------+
+|ly_do          |so_dong|so_nguoi_dung|
++---------------+-------+-------------+
+|trung_noi_dung |5304360|475531       |
+|nhap_lap_5_giay|11312  |7901         |
++---------------+-------+-------------+
+
+>> SELECT loai_su_kien, count(*) AS so_dong FROM delta.`hdfs://10.68.71.113:8020/lakehouse/bd03_khuyen_nghi/silver/tuong_tac` GROUP BY loai_su_kien ORDER BY so_dong DESC
++------------+-------+
+|loai_su_kien|so_dong|
++------------+-------+
+|xem         |2779729|
+|them_gio    |77561  |
+|mua         |25194  |
++------------+-------+
+

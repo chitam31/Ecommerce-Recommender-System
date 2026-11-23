@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block noi_dung %}
+<section class="hop dang-nhap">
+  <div class="dang-nhap-chu">
+    <h1>Chào mừng đến sàn TMĐT giả lập</h1>
+    <p class="mo">Chọn một người dùng để xem khối "Dành cho bạn". Mỗi lần trang hiển thị, từng sản phẩm được ghi
+      một dòng vào <code>gold.nhat_ky_hien_thi</code> qua Kafka topic <code>hien-thi</code>.</p>
+  </div>
+  <div class="dang-nhap-form">
+    <form method="get" action="/" class="hang">
+      <select name="u" onchange="this.form.submit()">
+        <option value="">Chọn người dùng mẫu…</option>
+        {% for m in mau_nguoi %}
+        <option value="{{ m.ma_nguoi_dung }}" {% if m.ma_nguoi_dung == u %}selected{% endif %}>{{ m.ma_nguoi_dung }} ({{ m.chien_luoc }})</option>
+        {% endfor %}
+      </select>
+    </form>
+    <form method="get" action="/" class="hang">
+      <input name="u" placeholder="hoặc gõ mã người dùng" value="">
+      <button type="submit">Vào</button>
+      <a class="nut nut-phu" href="/nguoi-dung-moi">+ Người dùng mới (cold start)</a>
+    </form>
+  </div>
+</section>
+
+{% if kq %}
+<section class="ho-so">
+  <div class="avatar">{{ kq.ma_nguoi_dung[-2:]|upper }}</div>
+  <div class="ho-so-chu">
+    <div class="ho-so-ten">Người dùng <b>{{ kq.ma_nguoi_dung }}</b></div>
+    <div class="the-nho-hang">
+      {% if kq.chien_luoc == "als" %}
+      <span class="chip chip-nhom-{{ kq.nhom_ab }}">Nhóm {{ kq.nhom_ab }} · {{ "ALS thuần" if kq.nhom_ab == "A" else "ALS trộn 30% thịnh hành" }}</span>
+      {% else %}
+      <span class="chip" title="Thí nghiệm A/B chỉ tính lượt hiển thị của người dùng có gợi ý ALS">Nhóm {{ kq.nhom_ab }} · ngoài thí nghiệm A/B</span>
+      {% endif %}
+      <span class="chip">Chiến lược <b>{{ kq.chien_luoc }}</b></span>
+      {% if kq.phien_ban_mo_hinh %}<span class="chip">Mô hình {{ kq.phien_ban_mo_hinh }}</span>{% endif %}
+      <span class="chip chip-xanh">Đã ghi {{ kq.goi_y|length }} impression</span>
+    </div>
+  </div>
+</section>
+
+<section class="hop">
+  <div class="dau-muc">
+    <h2>Dành cho bạn</h2>
+    <span class="mo">
+      {% if kq.chien_luoc == "als" %}Gợi ý cá nhân hóa từ ALS, xếp lại theo độ mới lạ (novelty){% if kq.phien_ban_mo_hinh and kq.phien_ban_mo_hinh.startswith("als_v2_") %}, lọc theo tầm giá (mô hình v2){% endif %}{% if kq.nhom_ab == "B" %}; ô thịnh hành lấy từ cửa sổ mới nhất{% endif %}
+      {% elif kq.chien_luoc == "nguoi_moi" %}Người dùng mới: lấy từ cửa sổ thịnh hành 15 phút mới nhất
+      {% else %}Ít tương tác: bán chạy trong danh mục đã xem, xen kẽ thịnh hành{% endif %}
+    </span>
+  </div>
+  <div class="luoi">
+    {% for g in kq.goi_y %}{% set vi_tri = loop.index %}{% include "_the_san_pham.html" %}{% endfor %}
+  </div>
+</section>
+
+<section class="hop">
+  <div class="dau-muc">
+    <h2><span class="cham-nong"></span>Đang thịnh hành</h2>
+    <span class="mo">Cửa sổ trượt 15 phút, luồng Structured Streaming cập nhật mỗi 20 giây</span>
+  </div>
+  <div class="luoi">
+    {% for g in kq.thinh_hanh %}{% set vi_tri = loop.index %}{% include "_the_san_pham.html" %}{% endfor %}
+  </div>
+  {% if not kq.thinh_hanh %}<p class="mo">Luồng thịnh hành chưa có dữ liệu trong 15 phút qua.</p>{% endif %}
+</section>
+{% else %}
+<section class="hop ba-chien-luoc">
+  <div><span class="chip chip-nhom-A">als</span><p>Người dùng quen: ALS xếp lại theo độ mới lạ; nhóm B trộn 30% thịnh hành.</p></div>
+  <div><span class="chip">it_tuong_tac</span><p>Dưới 5 tương tác: bán chạy trong các danh mục đã xem, xen kẽ thịnh hành.</p></div>
+  <div><span class="chip chip-xanh">nguoi_moi</span><p>Người dùng mới hoàn toàn: top thịnh hành 15 phút, đổi theo từng cú click.</p></div>
+</section>
+{% endif %}
+{% endblock %}

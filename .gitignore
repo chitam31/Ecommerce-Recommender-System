@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv*/
+venv*/
+
+# Gói common do submit.sh sinh ra mỗi lần nộp job
+jobs/common.zip
+jobs/common.zip.*
+
+# Bí mật và cấu hình riêng từng máy (sinh bởi scripts/cum/khoi_dong_may.sh hoặc chép từ *.mau)
+ha_tang/*/.env
+ha_tang/*/.env.rieng
+ha_tang/airflow/mat_khau.json
+conf/.env
+.kaggle/
+kaggle.json
+
+# Dữ liệu và kết quả chạy: nằm trên HDFS, không đưa lên Git
+du_lieu/
+data/
+*.parquet
+spark-warehouse/
+metastore_db/
+derby.log
+logs/
+*.log
+
+# Mô hình thật nằm trên HDFS /lakehouse/bd03_khuyen_nghi/models; chỉ giữ tài liệu trong models/
+models/*
+!models/README.md
+!models/.gitkeep
+
+# Hệ điều hành và IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

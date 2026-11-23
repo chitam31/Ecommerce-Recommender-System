@@ -1,0 +1,7 @@
+Thời điểm: 2026-11-16 06:39:49 | worker sống: 5 | lõi đang dùng: 4/34
+bd03-nap-su-kien             app-20261115230817-0241    lõi=1   đã chạy    31.5 phút
+bd03-tinh-thinh-hanh         app-20261115230817-0240    lõi=2   đã chạy    31.5 phút
+bd03-ghi-hien-thi            app-20261115230817-0242    lõi=1   đã chạy    31.5 phút
+nap          bd03-nap-su-kien         app-20261115230817-0241
+thinh_hanh   bd03-tinh-thinh-hanh     app-20261115230817-0240
+hien_thi     bd03-ghi-hien-thi        app-20261115230817-0242

@@ -1,0 +1,27 @@
+# Backfill DAG 3 (kn_tinh_ab) trên cụm, 16/11/2026 11:18–11:25 (giờ Việt Nam), chạy từ laptop qua ZeroTier.
+# Mục A.8 (Airflow: backfill). Chép lại nguyên văn từ màn hình terminal.
+# Khoảng backfill: 06:00–08:00 ngày 15/11 giờ Việt Nam = 2026-11-14T23:00Z, 2026-11-15T00:00Z, 2026-11-15T01:00Z.
+
+>> airflow backfill create --dag-id kn_tinh_ab --from-date 2026-11-15T06:00:00+07:00 --to-date 2026-11-15T08:00:00+07:00 --reprocess-behavior completed
+2026-11-16T04:18:03.148538Z [info     ] Created backfill Dag run.      [airflow.models.backfill] backfill_id=1 dag_id=kn_tinh_ab loc=backfill.py:803 logical_date=DateTime(2026, 11, 15, 6, 0, 0, tzinfo=FixedTimezone(25200, name="+07:00"))
+2026-11-16T04:18:03.164810Z [info     ] Created backfill Dag run.      [airflow.models.backfill] backfill_id=1 dag_id=kn_tinh_ab loc=backfill.py:803 logical_date=DateTime(2026, 11, 15, 0, 0, 0, tzinfo=Timezone('UTC'))
+2026-11-16T04:18:03.178150Z [info     ] Created backfill Dag run.      [airflow.models.backfill] backfill_id=1 dag_id=kn_tinh_ab loc=backfill.py:803 logical_date=DateTime(2026, 11, 15, 1, 0, 0, tzinfo=Timezone('UTC'))
+
+>> airflow dags list-runs kn_tinh_ab | grep -E "run_id|backfill|2026-11-1(4T23|5T00|5T01)"
+dag_id     | run_id                               | state   | run_after                 | logical_date              | start_date                       | end_date
+kn_tinh_ab | scheduled__2026-11-15T01:00:00+00:00 | success | 2026-11-15T01:00:00+00:00 | 2026-11-15T01:00:00+00:00 | 2026-11-16T04:18:04.149254+00:00 | 2026-11-16T04:18:06.485403+00:00
+kn_tinh_ab | scheduled__2026-11-15T00:00:00+00:00 | success | 2026-11-15T00:00:00+00:00 | 2026-11-15T00:00:00+00:00 | 2026-11-16T04:18:04.148905+00:00 | 2026-11-16T04:18:37.604256+00:00
+kn_tinh_ab | scheduled__2026-11-14T23:00:00+00:00 | success | 2026-11-14T23:00:00+00:00 | 2026-11-14T23:00:00+00:00 | 2026-11-16T04:18:04.148527+00:00 | 2026-11-16T04:18:05.240844+00:00
+
+>> grep -rhoE "Backfill: [^\"]{0,70}|--tu-ngay [0-9-]+ --den-ngay [0-9-]+" /opt/airflow/logs/dag_id=kn_tinh_ab | sort | uniq -c
+      1 --tu-ngay 2026-11-15 --den-ngay 2026-11-15
+      1 Backfill: bỏ qua lượt 2026-11-14T23:00:00+00:00 (chỉ tính lại ở 00:00 UTC)
+      1 Backfill: bỏ qua lượt 2026-11-15T01:00:00+00:00 (chỉ tính lại ở 00:00 UTC)
+
+# Đọc kết quả
+# - Ba giờ này đã có lượt chạy theo lịch, nên --reprocess-behavior completed chạy lại chính các lượt đó dưới dạng
+#   backfill (run_id giữ tên scheduled__, cả ba bắt đầu lại lúc 04:18:04Z = 11:18 giờ Việt Nam, đều success).
+# - cong_backfill nhận ra lượt backfill qua run_type: lượt 00:00 UTC truyền --tu-ngay 2026-11-15 --den-ngay 2026-11-15
+#   cho transform/tinh_ket_qua_ab.py (job Spark, 33 giây); hai lượt còn lại bị bỏ qua (khoảng 1–2 giây).
+# - grep quét toàn bộ log của kn_tinh_ab: chỉ có đúng một lần --tu-ngay và hai dòng "bỏ qua", tức là của lần backfill này;
+#   các lượt theo lịch không có tham số. MERGE theo (ngày, nhóm) nên tính lại không nhân đôi dòng trong gold.ket_qua_ab.

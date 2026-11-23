@@ -1,0 +1,55 @@
+26/11/15 23:09:39 WARN Utils: Your hostname, labsoe-11 resolves to a loopback address: 127.0.1.1; using 192.168.80.166 instead (on interface wlo1)
+26/11/15 23:09:39 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+26/11/15 23:09:40 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/15 23:09:40 INFO SparkContext: Running Spark version 3.5.3
+26/11/15 23:09:40 INFO SparkContext: OS info Linux, 6.8.0-138-generic, amd64
+26/11/15 23:09:40 INFO SparkContext: Java version 11.0.24
+26/11/15 23:09:40 INFO ResourceUtils: ==============================================================
+26/11/15 23:09:40 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/11/15 23:09:40 INFO ResourceUtils: ==============================================================
+26/11/15 23:09:40 INFO SparkContext: Submitted application: bd03-bronze-to-silver
+26/11/15 23:09:40 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 2, script: , vendor: , memory -> name: memory, amount: 2048, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/11/15 23:09:40 INFO ResourceProfile: Limiting resource is cpus at 2 tasks per executor
+26/11/15 23:09:40 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/11/15 23:09:40 INFO SecurityManager: Changing view acls to: spark
+26/11/15 23:09:40 INFO SecurityManager: Changing modify acls to: spark
+26/11/15 23:09:40 INFO SecurityManager: Changing view acls groups to: 
+26/11/15 23:09:40 INFO SecurityManager: Changing modify acls groups to: 
+26/11/15 23:09:40 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: spark; groups with view permissions: EMPTY; users with modify permissions: spark; groups with modify permissions: EMPTY
+26/11/15 23:09:40 INFO Utils: Successfully started service 'sparkDriver' on port 4047.
+26/11/15 23:09:40 INFO SparkEnv: Registering MapOutputTracker
+26/11/15 23:09:40 INFO SparkEnv: Registering BlockManagerMaster
+26/11/15 23:09:40 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/11/15 23:09:40 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/11/15 23:09:40 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/11/15 23:09:40 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-73d401fa-9a81-4f55-991f-a02d7ff4e87a
+26/11/15 23:09:40 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/11/15 23:09:40 INFO SparkEnv: Registering OutputCommitCoordinator
+26/11/15 23:09:41 INFO JettyUtils: Start Jetty 0.0.0.0:4143 for SparkUI
+26/11/15 23:09:41 INFO Utils: Successfully started service 'SparkUI' on port 4143.
+26/11/15 23:09:41 INFO SparkContext: Added file file:///opt/spark/jobs/common.zip at spark://10.68.71.113:4047/files/common.zip with timestamp 1794784180674
+26/11/15 23:09:41 INFO Utils: Copying /opt/spark/jobs/common.zip to /tmp/spark-7b94f44e-aa60-4940-814f-80f1454fa1b0/userFiles-d7ec2814-3cbd-42db-8862-bec61ec72b67/common.zip
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://10.68.71.113:7077...
+26/11/15 23:09:41 INFO TransportClientFactory: Successfully created connection to /10.68.71.113:7077 after 15 ms (0 ms spent in bootstraps)
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20261115230941-0245
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261115230941-0245/0 on worker-20261110042901-10.68.71.198-7078 (10.68.71.198:7078) with 2 core(s)
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: Granted executor ID app-20261115230941-0245/0 on hostPort 10.68.71.198:7078 with 2 core(s), 2.0 GiB RAM
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261115230941-0245/1 on worker-20261110042913-10.68.71.90-7078 (10.68.71.90:7078) with 2 core(s)
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: Granted executor ID app-20261115230941-0245/1 on hostPort 10.68.71.90:7078 with 2 core(s), 2.0 GiB RAM
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261115230941-0245/2 on worker-20261110042917-10.68.71.149-7078 (10.68.71.149:7078) with 2 core(s)
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: Granted executor ID app-20261115230941-0245/2 on hostPort 10.68.71.149:7078 with 2 core(s), 2.0 GiB RAM
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261115230941-0245/3 on worker-20261110042906-10.68.71.204-7078 (10.68.71.204:7078) with 2 core(s)
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: Granted executor ID app-20261115230941-0245/3 on hostPort 10.68.71.204:7078 with 2 core(s), 2.0 GiB RAM
+26/11/15 23:09:41 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 4048.
+26/11/15 23:09:41 INFO NettyBlockTransferService: Server created on 10.68.71.113 0.0.0.0:4048
+26/11/15 23:09:41 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/11/15 23:09:41 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 10.68.71.113, 4048, None)
+26/11/15 23:09:41 INFO BlockManagerMasterEndpoint: Registering block manager 10.68.71.113:4048 with 434.4 MiB RAM, BlockManagerId(driver, 10.68.71.113, 4048, None)
+26/11/15 23:09:41 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 10.68.71.113, 4048, None)
+26/11/15 23:09:41 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 10.68.71.113, 4048, None)
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261115230941-0245/0 is now RUNNING
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261115230941-0245/1 is now RUNNING
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261115230941-0245/2 is now RUNNING
+26/11/15 23:09:41 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261115230941-0245/3 is now RUNNING
+26/11/15 23:09:41 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+{"so_ngay": 142, "tu": "2015-05-03", "den": "2026-11-12", "backfill": false, "bi_loai": {"thieu_truong": 0, "trung_ma_su_kien": 0, "trung_noi_dung": 5304360, "bot": 0, "nhap_lap_5_giay": 11312, "loai_su_kien_khong_dung": 0}, "phien_ban_quarantine": 0}

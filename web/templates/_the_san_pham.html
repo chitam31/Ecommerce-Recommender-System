@@ -1,0 +1,18 @@
+{# Thẻ một sản phẩm. Biến: g (gợi ý đã qua trang_tri), u (user), vi_tri #}
+<a class="the" href="/san-pham/{{ g.ma_san_pham }}?{% if u %}u={{ u }}{% endif %}{% if g.ma_hien_thi %}&mh={{ g.ma_hien_thi }}{% endif %}"
+   title="Nguồn: {{ g.nguon }} · vị trí {{ vi_tri }}">
+  <div class="the-anh">
+    <img src="{{ g.anh }}" alt="Ảnh minh họa: {{ g.ten_hien_thi }}" loading="lazy">
+    <span class="vi-tri">{{ vi_tri }}</span>
+    <span class="nhan nhan-{{ g.nguon }}">{{ g.nhan_nguon }}</span>
+  </div>
+  <div class="the-than">
+    <div class="nganh" style="color: {{ g.nganh.mau_dam }}">{{ g.nganh.ten }}</div>
+    <div class="ten">{{ g.ten_hien_thi }}</div>
+    <div class="gia">{{ (g.gia_san_pham|gia) or "Chưa có giá" }}</div>
+    {% if g.so_luot_xem is defined and g.so_luot_xem is not none %}
+    <div class="chi-so"><span>{{ g.so_luot_xem }} lượt xem</span><span>{{ g.so_luot_them_gio or 0 }} thêm giỏ</span></div>
+    {% endif %}
+    <div class="ma">Mã {{ g.ma_san_pham }} · danh mục {{ g.ma_danh_muc or "?" }}</div>
+  </div>
+</a>

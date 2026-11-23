@@ -1,0 +1,107 @@
+# Airflow 3.3.1 chạy trên máy master labsoe-11 (10.68.71.113), LocalExecutor + PostgreSQL.
+#
+# Vì sao LocalExecutor mà không Celery như mục 10.3 giáo trình: mọi việc nặng đã chạy trên
+# cụm Spark; task Airflow chỉ là lệnh spark-submit chờ kết quả, một máy là đủ. Chuyển
+# sang CeleryExecutor chỉ cần thêm redis + worker, xem docs/TRIEN_KHAI_CUM.md.
+#
+# Giao diện: http://10.68.71.113:8088  (8080 đã dành cho Spark Master UI)
+# Khởi động: cd ha_tang/airflow && cp .env.mau .env && docker compose up -d
+name: bd03-airflow
+
+x-airflow: &airflow
+  build: .
+  image: bd03/airflow:3.3.1
+  # Chạy bằng uid của tài khoản sở hữu thư mục dự án (AIRFLOW_UID trong .env, như compose chính
+  # thức của Airflow), nhóm 0 như ảnh gốc yêu cầu. Với uid mặc định 50000, api-server không mở được
+  # mat_khau.json (SimpleAuthManager mở tệp ở chế độ "a+", cần quyền ghi) và task không ghi được
+  # jobs/common.zip, logs/ vào thư mục dự án được gắn vào.
+  user: "${AIRFLOW_UID:-50000}:0"
+  env_file: .env
+  environment: &moi_truong
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/bd03/airflow/dags
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: Asia/Ho_Chi_Minh
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-apiserver:8080/execution/
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: "admin:admin"
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_PASSWORDS_FILE: /opt/airflow/mat_khau.json
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
+    # Máy master chỉ có 7,4 GB và còn phải chứa NameNode, Spark Master cùng driver của MỌI job
+    # Spark (PySpark ở standalone không có cluster mode). Giữ Airflow gọn, khoảng 1 GB thay vì
+    # gần 2 GB mặc định: api-server 1 tiến trình (mặc định 4), tối đa 6 task chạy đồng thời
+    # (mỗi task chỉ chờ một lệnh spark-submit), dag-processor 1 tiến trình phân tích DAG.
+    AIRFLOW__API__WORKERS: "1"
+    AIRFLOW__CORE__PARALLELISM: "6"
+    AIRFLOW__DAG_PROCESSOR__PARSING_PROCESSES: "1"
+    BD03_HOME: /opt/bd03
+    PYTHONPATH: /opt/bd03/airflow/dags
+  volumes:
+    # Gắn đúng thư mục dự án trên máy chủ vào CÙNG đường dẫn /opt/bd03, để submit.sh
+    # ghi jobs/common.zip vào thư mục mà container spark-master cũng nhìn thấy.
+    - ${BD03_HOST_DIR:?Dat BD03_HOST_DIR trong .env}:/opt/bd03
+    - ./mat_khau.json:/opt/airflow/mat_khau.json
+    - /var/run/docker.sock:/var/run/docker.sock
+  group_add:
+    - "${DOCKER_GID:-999}"
+  depends_on:
+    postgres:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+
+  airflow-init:
+    <<: *airflow
+    command: ["bash", "-c", "airflow db migrate"]
+    restart: "no"
+
+  airflow-apiserver:
+    <<: *airflow
+    command: api-server
+    ports:
+      - "8088:8080"
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow
+    command: scheduler
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:
+    <<: *airflow
+    command: dag-processor
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # Triggerer chỉ phục vụ toán tử deferrable; 5 DAG kn_* không dùng toán tử nào như vậy (sensor
+  # chạy mode="reschedule"), nên mặc định không bật để tiết kiệm RAM master. Cần thì:
+  #   docker compose -f ha_tang/airflow/docker-compose.yml --profile day_du up -d
+  airflow-triggerer:
+    <<: *airflow
+    command: triggerer
+    profiles: ["day_du"]
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+volumes:
+  airflow_db:

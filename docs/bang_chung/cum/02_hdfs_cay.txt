@@ -1,0 +1,91 @@
+# Chụp lại 16/11/2026 khoảng 10:42 (giờ Việt Nam), chạy từ laptop qua ZeroTier:
+#   ssh labsoe-11 "cd ~/bd03_khuyen_nghi && bash scripts/demo/cay_hdfs.sh --tep"
+# Lần chụp 06:09 cùng ngày có _quarantine rỗng (xem ghi chú ở 01_hdfs_du_h.txt).
+# Giờ trong cột thời gian của HDFS là UTC: 2026-11-15 23:34 UTC = 06:34 ngày 16/11 giờ Việt Nam.
+
+>> hdfs dfs -du -h /lakehouse/bd03_khuyen_nghi
+434.3 M  868.5 M  /lakehouse/bd03_khuyen_nghi/_quarantine
+943.1 M  1.8 G    /lakehouse/bd03_khuyen_nghi/bronze
+1.0 G    2.0 G    /lakehouse/bd03_khuyen_nghi/checkpoints
+39.8 M   79.6 M   /lakehouse/bd03_khuyen_nghi/features
+853.7 M  1.7 G    /lakehouse/bd03_khuyen_nghi/gold
+941.8 M  1.8 G    /lakehouse/bd03_khuyen_nghi/landing
+541.9 M  1.1 G    /lakehouse/bd03_khuyen_nghi/models
+247.0 M  494.0 M  /lakehouse/bd03_khuyen_nghi/silver
+
+>> hdfs dfs -du -s -h /lakehouse/bd03_khuyen_nghi
+4.9 G  9.8 G  /lakehouse/bd03_khuyen_nghi
+
+>> hdfs dfs -count /lakehouse/bd03_khuyen_nghi/*   (số thư mục, số tệp, số byte, đường dẫn)
+         146          143          455367590 /lakehouse/bd03_khuyen_nghi/_quarantine
+         145         2967          988907492 /lakehouse/bd03_khuyen_nghi/bronze
+          35         2330         1082453000 /lakehouse/bd03_khuyen_nghi/checkpoints
+           4          645           41730046 /lakehouse/bd03_khuyen_nghi/features
+          38         1946          895151711 /lakehouse/bd03_khuyen_nghi/gold
+           2            4          987498023 /lakehouse/bd03_khuyen_nghi/landing
+          44          224          568248610 /lakehouse/bd03_khuyen_nghi/models
+         148         6753          258984610 /lakehouse/bd03_khuyen_nghi/silver
+
+>> hdfs dfs -ls -R /lakehouse/bd03_khuyen_nghi   (chỉ thư mục, tối đa 3 cấp dưới gốc; bỏ ngay=..., _delta_log, nội dung checkpoint)
+drwxr-xr-x  2026-11-15 23:34  /lakehouse/bd03_khuyen_nghi/_quarantine
+drwxr-xr-x  2026-11-15 23:37  /lakehouse/bd03_khuyen_nghi/_quarantine/tuong_tac
+drwxr-xr-x  2026-11-15 22:48  /lakehouse/bd03_khuyen_nghi/bronze
+drwxr-xr-x  2026-11-12 03:11  /lakehouse/bd03_khuyen_nghi/bronze/su_kien
+drwxr-xr-x  2026-11-15 22:49  /lakehouse/bd03_khuyen_nghi/checkpoints
+drwxr-xr-x  2026-11-10 15:51  /lakehouse/bd03_khuyen_nghi/checkpoints/ghi_hien_thi_v1
+drwxr-xr-x  2026-11-10 07:54  /lakehouse/bd03_khuyen_nghi/checkpoints/nap_su_kien_v2
+drwxr-xr-x  2026-11-10 15:52  /lakehouse/bd03_khuyen_nghi/checkpoints/tinh_thinh_hanh_v1
+drwxr-xr-x  2026-11-15 22:48  /lakehouse/bd03_khuyen_nghi/features
+drwxr-xr-x  2026-11-11 19:10  /lakehouse/bd03_khuyen_nghi/features/ma_tran_tuong_tac
+drwxr-xr-x  2026-11-15 22:49  /lakehouse/bd03_khuyen_nghi/gold
+drwxr-xr-x  2026-11-10 10:00  /lakehouse/bd03_khuyen_nghi/gold/do_hieu_nang_zorder
+drwxr-xr-x  2026-11-11 19:49  /lakehouse/bd03_khuyen_nghi/gold/goi_y_als_tam
+drwxr-xr-x  2026-11-16 01:12  /lakehouse/bd03_khuyen_nghi/gold/goi_y_nguoi_dung
+drwxr-xr-x  2026-11-11 19:53  /lakehouse/bd03_khuyen_nghi/gold/goi_y_tam
+drwxr-xr-x  2026-11-15 05:00  /lakehouse/bd03_khuyen_nghi/gold/ket_qua_ab
+drwxr-xr-x  2026-11-12 03:34  /lakehouse/bd03_khuyen_nghi/gold/ket_qua_tai_lap
+drwxr-xr-x  2026-11-11 19:36  /lakehouse/bd03_khuyen_nghi/gold/ket_qua_tuning
+drwxr-xr-x  2026-11-11 19:55  /lakehouse/bd03_khuyen_nghi/gold/lich_su_huan_luyen
+drwxr-xr-x  2026-11-15 21:03  /lakehouse/bd03_khuyen_nghi/gold/nhat_ky_hien_thi
+drwxr-xr-x  2026-11-15 21:04  /lakehouse/bd03_khuyen_nghi/gold/san_pham_lien_quan
+drwxr-xr-x  2026-11-15 21:03  /lakehouse/bd03_khuyen_nghi/gold/thinh_hanh_15p
+drwxr-xr-x  2026-11-11 21:08  /lakehouse/bd03_khuyen_nghi/gold/thong_ke_san_pham
+drwxr-xr-x  2026-11-15 22:49  /lakehouse/bd03_khuyen_nghi/landing
+drwxr-xr-x  2026-11-10 07:41  /lakehouse/bd03_khuyen_nghi/landing/retailrocket
+drwxr-xr-x  2026-11-11 19:08  /lakehouse/bd03_khuyen_nghi/models
+drwxr-xr-x  2026-11-11 19:46  /lakehouse/bd03_khuyen_nghi/models/als
+drwxr-xr-x  2026-11-10 09:32  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T075240
+drwxr-xr-x  2026-11-10 12:33  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T075240_phuc_vu
+drwxr-xr-x  2026-11-10 17:36  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T162756
+drwxr-xr-x  2026-11-10 22:51  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T222242
+drwxr-xr-x  2026-11-10 23:01  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T222242_phuc_vu
+drwxr-xr-x  2026-11-10 23:34  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T230924
+drwxr-xr-x  2026-11-10 23:44  /lakehouse/bd03_khuyen_nghi/models/als/r20261110T230924_phuc_vu
+drwxr-xr-x  2026-11-11 19:36  /lakehouse/bd03_khuyen_nghi/models/als/r20261111T190002
+drwxr-xr-x  2026-11-11 19:47  /lakehouse/bd03_khuyen_nghi/models/als/r20261111T190002_phuc_vu
+drwxr-xr-x  2026-11-11 19:08  /lakehouse/bd03_khuyen_nghi/models/item_indexer
+drwxr-xr-x  2026-11-11 19:08  /lakehouse/bd03_khuyen_nghi/models/item_indexer/data
+drwxr-xr-x  2026-11-11 19:08  /lakehouse/bd03_khuyen_nghi/models/item_indexer/metadata
+drwxr-xr-x  2026-11-11 19:07  /lakehouse/bd03_khuyen_nghi/models/user_indexer
+drwxr-xr-x  2026-11-11 19:07  /lakehouse/bd03_khuyen_nghi/models/user_indexer/data
+drwxr-xr-x  2026-11-11 19:07  /lakehouse/bd03_khuyen_nghi/models/user_indexer/metadata
+drwxr-xr-x  2026-11-15 22:49  /lakehouse/bd03_khuyen_nghi/silver
+drwxr-xr-x  2026-11-10 16:12  /lakehouse/bd03_khuyen_nghi/silver/san_pham
+drwxr-xr-x  2026-11-11 19:04  /lakehouse/bd03_khuyen_nghi/silver/tuong_tac
+
+>> hdfs dfs -ls /lakehouse/bd03_khuyen_nghi/silver/tuong_tac | head   (bảng Delta phân vùng theo ngay)
+Found 142 items
+drwxr-xr-x   - spark hadoop          0 2026-11-15 21:01 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-03
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-04
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-05
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-06
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-07
+drwxr-xr-x   - spark hadoop          0 2026-11-10 16:15 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/ngay=2015-05-08
+
+>> hdfs dfs -ls /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log | tail -5   (nhật ký giao dịch Delta)
+-rw-r--r--   2 spark hadoop        360 2026-11-14 21:01 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log/00000000000000000020.json
+-rw-r--r--   2 spark hadoop        401 2026-11-15 21:01 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log/00000000000000000021.json
+-rw-r--r--   2 spark hadoop        360 2026-11-15 21:01 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log/00000000000000000022.json
+drwxr-xr-x   - spark hadoop          0 2026-11-10 08:09 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log/_commits
+-rw-r--r--   2 spark hadoop       4961 2026-11-14 21:01 /lakehouse/bd03_khuyen_nghi/silver/tuong_tac/_delta_log/_last_checkpoint

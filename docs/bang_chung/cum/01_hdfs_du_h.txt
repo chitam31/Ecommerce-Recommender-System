@@ -1,0 +1,18 @@
+# Chụp lại 16/11/2026 10:27 (giờ Việt Nam), chạy từ laptop qua ZeroTier:
+#   ssh labsoe-11 "docker exec hadoop-master hdfs dfs -du -h /lakehouse/bd03_khuyen_nghi; echo; docker exec hadoop-master hdfs dfs -du -s -h /lakehouse/bd03_khuyen_nghi"
+# Lần chụp 06:09 cùng ngày (thu_bang_chung.sh, bước 1) có _quarantine = 0 vì bước dựng lại _quarantine.tuong_tac
+# (transform/bronze_to_silver.py --toan-bo --chi-cach-ly, bước 3) chạy sau đó. Bản này có dữ liệu ở cả 7 thư mục của mục A.4.
+# Cột 1: dung lượng dữ liệu; cột 2: dung lượng chiếm trên đĩa (hệ số sao chép HDFS = 2).
+
+>> hdfs dfs -du -h /lakehouse/bd03_khuyen_nghi
+434.3 M  868.5 M  /lakehouse/bd03_khuyen_nghi/_quarantine
+943.1 M  1.8 G    /lakehouse/bd03_khuyen_nghi/bronze
+1.0 G    2.0 G    /lakehouse/bd03_khuyen_nghi/checkpoints
+39.8 M   79.6 M   /lakehouse/bd03_khuyen_nghi/features
+853.7 M  1.7 G    /lakehouse/bd03_khuyen_nghi/gold
+941.8 M  1.8 G    /lakehouse/bd03_khuyen_nghi/landing
+541.9 M  1.1 G    /lakehouse/bd03_khuyen_nghi/models
+247.0 M  494.0 M  /lakehouse/bd03_khuyen_nghi/silver
+
+>> hdfs dfs -du -s -h /lakehouse/bd03_khuyen_nghi
+4.9 G  9.8 G  /lakehouse/bd03_khuyen_nghi

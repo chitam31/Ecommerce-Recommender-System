@@ -1,0 +1,78 @@
+>> airflow dags list
+dag_id                | fileloc                                         | owners    | is_paused | bundle_name | bundle_version
+======================+=================================================+===========+===========+=============+===============
+kn_bao_tri            | /opt/bd03/airflow/dags/kn_bao_tri.py            | nhom-bd03 | False     | dags-folder | None          
+kn_bao_tri            | /opt/bd03/airflow/dags/kn_bao_tri.py            | nhom-bd03 | False     | dags-folder | None          
+kn_giam_sat_streaming | /opt/bd03/airflow/dags/kn_giam_sat_streaming.py | nhom-bd03 | False     | dags-folder | None          
+kn_pipeline_hang_ngay | /opt/bd03/airflow/dags/kn_pipeline_hang_ngay.py | nhom-bd03 | True      | dags-folder | None          
+kn_pipeline_hang_ngay | /opt/bd03/airflow/dags/kn_pipeline_hang_ngay.py | nhom-bd03 | True      | dags-folder | None          
+kn_pipeline_hang_ngay | /opt/bd03/airflow/dags/kn_pipeline_hang_ngay.py | nhom-bd03 | True      | dags-folder | None          
+kn_tai_lap            | /opt/bd03/airflow/dags/kn_tai_lap.py            | nhom-bd03 | False     | dags-folder | None          
+kn_tai_lap            | /opt/bd03/airflow/dags/kn_tai_lap.py            | nhom-bd03 | False     | dags-folder | None          
+kn_tinh_ab            | /opt/bd03/airflow/dags/kn_tinh_ab.py            | nhom-bd03 | False     | dags-folder | None          
+kn_tinh_ab            | /opt/bd03/airflow/dags/kn_tinh_ab.py            | nhom-bd03 | False     | dags-folder | None          
+                                                                                                                              
+
+>> airflow dags list-import-errors
+No data found
+
+>> Deadline Alert (thay sla) và retries của từng DAG
+2026-11-15T23:39:38.953301Z [info     ] Filling up the DagBag from /opt/bd03/airflow/dags [airflow.dag_processing.dagbag.DagBag] loc=dagbag.py:460
+2026-11-15T23:39:38.987517Z [warning  ] The `airflow.utils.operator_helpers.determine_kwargs` attribute is deprecated. Please use `'airflow.sdk.bases.decorator.determine_kwargs'`. [py.warnings] category=UserWarning filename=/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/standard/sensors/python.py lineno=24
+kn_bao_tri               lich=0 4 * * *      deadline=90 phut (DagRunQueuedAtDeadline) callback=bd03_chung.canh_bao_tre_han retries=[1]
+kn_giam_sat_streaming    lich=*/15 * * * *   deadline=10 phut (DagRunQueuedAtDeadline) callback=bd03_chung.canh_bao_tre_han retries=[0]
+kn_pipeline_hang_ngay    lich=0 2 * * *      deadline=420 phut (DagRunQueuedAtDeadline) callback=bd03_chung.canh_bao_tre_han retries=[1]
+kn_tai_lap               lich=None           deadline=180 phut (DagRunQueuedAtDeadline) callback=bd03_chung.canh_bao_tre_han retries=[0]
+kn_tinh_ab               lich=0 * * * *      deadline=30 phut (DagRunQueuedAtDeadline) callback=bd03_chung.canh_bao_tre_han retries=[1]
+
+>> airflow dags list-runs kn_pipeline_hang_ngay (5 lượt gần nhất)
+dag_id                | run_id                            | state   | run_after                        | logical_date              | start_date                       | end_date                        
+======================+===================================+=========+==================================+===========================+==================================+=================================
+kn_pipeline_hang_ngay | scheduled__2026-11-14T19:00:00+00 | running | 2026-11-14T19:00:00+00:00        | 2026-11-14T19:00:00+00:00 | 2026-11-15T04:01:55.467109+00:00 |                                 
+                      | :00                               |         |                                  |                           |                                  |                                 
+kn_pipeline_hang_ngay | scheduled__2026-11-11T19:00:00+00 | success | 2026-11-11T19:00:00+00:00        | 2026-11-11T19:00:00+00:00 | 2026-11-11T19:00:00.926889+00:00 | 2026-11-11T19:58:07.610202+00:00
+                      | :00                               |         |                                  |                           |                                  |                                 
+kn_pipeline_hang_ngay | manual__2026-11-10T21:05:38.28442 | success | 2026-11-10T21:05:38.284429+00:00 |                           | 2026-11-10T23:08:55.184494+00:00 | 2026-11-10T23:52:05.087707+00:00
+
+>> airflow dags list-runs kn_giam_sat_streaming (5 lượt gần nhất)
+dag_id                | run_id                               | state   | run_after                 | logical_date              | start_date                       | end_date                        
+======================+======================================+=========+===========================+===========================+==================================+=================================
+kn_giam_sat_streaming | scheduled__2026-11-15T23:30:00+00:00 | success | 2026-11-15T23:30:00+00:00 | 2026-11-15T23:30:00+00:00 | 2026-11-15T23:30:00.787192+00:00 | 2026-11-15T23:30:34.472603+00:00
+kn_giam_sat_streaming | scheduled__2026-11-15T23:15:00+00:00 | success | 2026-11-15T23:15:00+00:00 | 2026-11-15T23:15:00+00:00 | 2026-11-15T23:15:00.391127+00:00 | 2026-11-15T23:15:38.564532+00:00
+kn_giam_sat_streaming | scheduled__2026-11-15T23:00:00+00:00 | success | 2026-11-15T23:00:00+00:00 | 2026-11-15T23:00:00+00:00 | 2026-11-15T23:08:16.803709+00:00 | 2026-11-15T23:08:43.520743+00:00
+                                                                                                                                                                                                    
+
+>> airflow dags list-runs kn_tinh_ab (5 lượt gần nhất)
+dag_id     | run_id                               | state   | run_after                 | logical_date              | start_date                       | end_date                        
+===========+======================================+=========+===========================+===========================+==================================+=================================
+kn_tinh_ab | scheduled__2026-11-15T23:00:00+00:00 | success | 2026-11-15T23:00:00+00:00 | 2026-11-15T23:00:00+00:00 | 2026-11-15T23:08:21.382354+00:00 | 2026-11-15T23:09:03.931525+00:00
+kn_tinh_ab | scheduled__2026-11-15T22:00:00+00:00 | success | 2026-11-15T22:00:00+00:00 | 2026-11-15T22:00:00+00:00 | 2026-11-15T22:00:01.107063+00:00 | 2026-11-15T22:00:22.142149+00:00
+kn_tinh_ab | scheduled__2026-11-15T21:00:00+00:00 | success | 2026-11-15T21:00:00+00:00 | 2026-11-15T21:00:00+00:00 | 2026-11-15T21:00:00.471580+00:00 | 2026-11-15T21:06:07.396028+00:00
+kn_tinh_ab | scheduled__2026-11-15T20:00:00+00:00 | success | 2026-11-15T20:00:00+00:00 | 2026-11-15T20:00:00+00:00 | 2026-11-15T20:00:00.968232+00:00 | 2026-11-15T20:00:17.205324+00:00
+kn_tinh_ab | scheduled__2026-11-15T19:00:00+00:00 | success | 2026-11-15T19:00:00+00:00 | 2026-11-15T19:00:00+00:00 | 2026-11-15T19:00:00.408114+00:00 | 2026-11-15T19:00:18.394758+00:00
+
+>> airflow dags list-runs kn_bao_tri (5 lượt gần nhất)
+dag_id     | run_id                               | state   | run_after                 | logical_date              | start_date                       | end_date                        
+===========+======================================+=========+===========================+===========================+==================================+=================================
+kn_bao_tri | scheduled__2026-11-15T21:00:00+00:00 | success | 2026-11-15T21:00:00+00:00 | 2026-11-15T21:00:00+00:00 | 2026-11-15T21:00:00.469006+00:00 | 2026-11-15T21:05:48.001720+00:00
+kn_bao_tri | scheduled__2026-11-14T21:00:00+00:00 | success | 2026-11-14T21:00:00+00:00 | 2026-11-14T21:00:00+00:00 | 2026-11-14T21:00:00.815062+00:00 | 2026-11-14T21:06:22.733971+00:00
+kn_bao_tri | scheduled__2026-11-13T21:00:00+00:00 | success | 2026-11-13T21:00:00+00:00 | 2026-11-13T21:00:00+00:00 | 2026-11-13T21:00:00.550143+00:00 | 2026-11-13T21:06:21.391970+00:00
+kn_bao_tri | scheduled__2026-11-12T21:00:00+00:00 | success | 2026-11-12T21:00:00+00:00 | 2026-11-12T21:00:00+00:00 | 2026-11-12T21:00:00.608264+00:00 | 2026-11-12T21:08:38.560614+00:00
+kn_bao_tri | scheduled__2026-11-11T21:00:00+00:00 | success | 2026-11-11T21:00:00+00:00 | 2026-11-11T21:00:00+00:00 | 2026-11-11T21:00:00.276952+00:00 | 2026-11-11T21:10:32.060167+00:00
+
+>> airflow dags list-runs kn_tai_lap (5 lượt gần nhất)
+dag_id     | run_id                                   | state   | run_after                        | logical_date | start_date                       | end_date                        
+===========+==========================================+=========+==================================+==============+==================================+=================================
+kn_tai_lap | manual__2026-11-12T02:19:28.786648+00:00 | success | 2026-11-12T02:19:28.786648+00:00 |              | 2026-11-12T02:19:29.614440+00:00 | 2026-11-12T03:35:05.333063+00:00
+kn_tai_lap | manual__2026-11-11T12:37:05.969972+00:00 | success | 2026-11-11T12:37:05.969972+00:00 |              | 2026-11-11T12:37:06.111770+00:00 | 2026-11-11T12:55:53.302545+00:00
+kn_tai_lap | manual__2026-11-10T16:13:53.511343+00:00 | success | 2026-11-10T16:13:53.511343+00:00 |              | 2026-11-10T16:13:53.667480+00:00 | 2026-11-10T18:01:32.084480+00:00
+                                                                                                                                                                                       
+
+>> tail -20 logs/canh_bao.log
+[CANH BAO] 2026-11-15T23:08:17 | dag=kn_giam_sat_streaming task=kiem_tra_job_song run=scheduled__2026-11-15T23:00:00+00:00
+[CANH BAO] 2026-11-15T23:08:40 | dag=kn_giam_sat_streaming task=kiem_tra_du_lieu_15_phut run=scheduled__2026-11-15T23:00:00+00:00
+[CANH BAO] Luồng thịnh hành gặp sự cố lúc 2026-11-15T23:00:00+00:00, đã thử khởi động lại
+[CANH BAO] 2026-11-15T23:15:35 | dag=kn_giam_sat_streaming task=kiem_tra_du_lieu_15_phut run=scheduled__2026-11-15T23:15:00+00:00
+[CANH BAO] Luồng thịnh hành gặp sự cố lúc 2026-11-15T23:15:00+00:00, đã thử khởi động lại
+[CANH BAO] 2026-11-15T23:30:32 | dag=kn_giam_sat_streaming task=kiem_tra_du_lieu_15_phut run=scheduled__2026-11-15T23:30:00+00:00
+[CANH BAO] Luồng thịnh hành gặp sự cố lúc 2026-11-15T23:30:00+00:00, đã thử khởi động lại

@@ -1,0 +1,27 @@
+// DAG 1 kn_pipeline_hang_ngay: phụ thuộc lấy đúng từ airflow/dags/kn_pipeline_hang_ngay.py.
+digraph G {
+  graph [rankdir=TB, fontname="Liberation Serif", nodesep=0.25, ranksep=0.28, pad=0.12, splines=true];
+  node  [shape=box, style=filled, fontname="Liberation Serif", fontsize=10, fillcolor="#FFFFFF", color="#1F1F1F", penwidth=0.7, margin="0.1,0.05"];
+  edge  [color="#1F1F1F", arrowsize=0.5, penwidth=0.7, fontname="Liberation Serif Italic", fontsize=9];
+  sen [fillcolor="#F2F2F2", label=<<B>cho_du_lieu_ngay_moi</B><BR/>PythonSensor, mode = reschedule<BR/>poke 5 min, timeout 6 h, soft_fail<BR/>bronze _spark_metadata newer than silver _delta_log?<BR/><I>manual run with bo_qua_cho_du_lieu: passes at once</I>>];
+  mc  [label=<<B>tao_ma_chay</B><BR/>run id rYYYYMMDDTHHMMSS → XCom>];
+  bs  [label=<<B>bronze_to_silver</B>  [lo]<BR/>incremental by day, replaceWhere>];
+  tk  [label=<<B>thong_ke_san_pham</B>  [lo]>];
+  lq  [label=<<B>san_pham_lien_quan</B>  [lo]>];
+  cb  [label=<<B>chuan_bi_ma_tran</B>  [lo]<BR/>features version v>];
+  hl  [label=<<B>huan_luyen_als</B>  [als]<BR/>grid toi_thieu (9) or day_du (27)<BR/>+ served configuration if missing<BR/>timeout 4 h>];
+  dg  [label=<<B>danh_gia</B>  [als]<BR/>metrics, baselines, v1/v2, decision<BR/>prints JSON → XCom>];
+  br  [shape=diamond, fillcolor="#F0DEDC", fontsize=9, margin="0.02,0.02", label=<<B>ndcg_co_cai_thien</B><BR/>BranchPythonOperator<BR/>reads danh_gia JSON>];
+  sg  [label=<<B>sinh_goi_y_toan_bo</B>  [als]<BR/>serving model on train + test<BR/>top-200 → novelty re-rank → top-20<BR/>(v2: top-40, filtered by price later)>];
+  tr  [label=<<B>tron_goi_y</B>  [lo]<BR/>A/B templates, cold start,<BR/>new items, v2 price filter>];
+  gg  [label=<<B>ghi_gold</B>  [lo]<BR/>MERGE gold.goi_y_nguoi_dung>];
+  gc  [fillcolor="#F2F2F2", label=<<B>giu_mo_hinh_cu</B><BR/>keep the serving lists>];
+  cw  [fillcolor="#F2F2F2", label=<<B>canh_bao</B><BR/>warning in the task log>];
+  sen -> mc -> bs;
+  bs -> tk -> lq; bs -> cb -> hl -> dg -> br;
+  br -> sg [label=" cai_thien = true: no model yet,\n or NDCG ≥ 0.99 × serving"]; sg -> tr -> gg;
+  tk -> tr;
+  br -> gc [label=" otherwise"]; gc -> cw;
+  {rank=same; tk; cb;}
+  {rank=same; sg; gc;}
+}

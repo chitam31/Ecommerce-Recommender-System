@@ -1,0 +1,25 @@
+digraph G {
+  graph [rankdir=LR, fontname="Liberation Sans", fontsize=11, nodesep=0.2, ranksep=0.35, pad=0.15, newrank=true];
+  node  [shape=box, style="rounded,filled", fontname="Liberation Sans", fontsize=9.5, fillcolor="#EADCF1", color="#7A5A8A", margin="0.09,0.04"];
+  edge  [color="#555555", arrowsize=0.6, fontname="Liberation Sans", fontsize=8];
+  subgraph cluster_2 { label=<<B>DAG 2  kn_giam_sat_streaming  (*/15 * * * *, timeout 14 min)</B>>; style="rounded,filled"; fillcolor="#F4F8F4"; color="#86B886";
+    a1 [label="kiem_tra_job_song\nSpark Master JSON:\nbd03-tinh-thinh-hanh alive?", fillcolor="#FFFFFF"];
+    a2 [label="kiem_tra_du_lieu_15_phut  [nhanh]\nnewest window end ≥ now − 15 min?"];
+    a3 [label="khoi_dong_lai_luong\nscripts/luong.sh khoi_dong thinh_hanh\ntrigger_rule = one_failed", fillcolor="#FBDADA", color="#B04A4A"];
+    a4 [label="canh_bao\nappend logs/canh_bao.log\ntrigger_rule = one_failed", fillcolor="#FBDADA", color="#B04A4A"];
+    a1 -> a3; a2 -> a3; a1 -> a4; a2 -> a4;
+  }
+  subgraph cluster_3 { label=<<B>DAG 3  kn_tinh_ab  (0 * * * *)</B>>; style="rounded,filled"; fillcolor="#F8F5FB"; color="#B48CC4";
+    b1 [label="tinh_ket_qua_ab  [lo]\nread CDF of gold.nhat_ky_hien_thi since last processed version\n→ recompute changed days → two-proportion z-test\n→ write gold.ket_qua_ab with phien_ban_delta_du_lieu"];
+  }
+  subgraph cluster_4 { label=<<B>DAG 4  kn_bao_tri  (0 4 * * *, timeout 2 h)</B>>; style="rounded,filled"; fillcolor="#FBF6EF"; color="#D9A47E";
+    c1 [label="toi_uu_delta  [bao_tri]\nDELETE recommendations > 7 days, trending windows > 2 days\n→ OPTIMIZE (+ ZORDER BY ma_nguoi_dung / ma_san_pham) → VACUUM\n(retention 30 days keeps time travel; retries on Delta write conflicts)"];
+  }
+  subgraph cluster_5 { label=<<B>DAG 5  kn_tai_lap  (manual; conf {"phien_ban_delta": v, "che_do": ...})</B>>; style="rounded,filled"; fillcolor="#FDF3F3"; color="#CC7777";
+    d1 [label="chay_lai_huan_luyen  [tai_lap]\nfeatures VERSION AS OF v → same tuning / evaluation\n→ compare with ket_qua_tuning & lich_su_huan_luyen\n→ append gold.ket_qua_tai_lap"];
+    d2 [label="so_sanh_voi_lich_su\nfail if max deviation ≥ 1e-6", fillcolor="#FFFFFF"];
+    d1 -> d2;
+  }
+  a3 -> b1 [style=invis]; b1 -> c1 [style=invis]; c1 -> d1 [style=invis];
+  {rank=same; a1; b1; c1; d1;}
+}

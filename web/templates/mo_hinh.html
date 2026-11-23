@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block noi_dung %}
+<section class="hop">
+  <h1>Chất lượng mô hình</h1>
+  {% if moi_nhat %}
+  {% set ct = moi_nhat.chi_tiet %}
+  <p>Mô hình mới nhất <b>{{ moi_nhat.phien_ban_mo_hinh }}</b> (features phiên bản {{ moi_nhat.phien_ban_features }},
+    rank={{ moi_nhat.rank }}, regParam={{ moi_nhat.reg_param }}, alpha={{ moi_nhat.alpha }}) · trạng thái {{ moi_nhat.trang_thai }}</p>
+  <p>Ngưỡng đạt: NDCG@10 cao hơn baseline bán chạy ít nhất {{ "%.0f%%"|format(nguong.tang_ndcg * 100) }} và Coverage ≥ {{ "%.0f%%"|format(nguong.coverage * 100) }}.
+    Kết quả: tăng {{ "%+.1f%%"|format((moi_nhat.uplift_ndcg or 0) * 100) }}, coverage {{ "%.1f%%"|format(moi_nhat.coverage * 100) }}
+    → <b>{{ "ĐẠT" if moi_nhat.dat_nguong else "CHƯA ĐẠT" }}</b></p>
+  <table>
+    <tr><th>Phương pháp</th><th>Precision@10</th><th>Recall@10</th><th>NDCG@10</th><th>MAP@10</th><th>Coverage</th><th>Novelty</th></tr>
+    <tr><td>ALS</td><td>{{ "%.4f"|format(moi_nhat.precision_at_10) }}</td><td>{{ "%.4f"|format(moi_nhat.recall_at_10) }}</td>
+      <td>{{ "%.4f"|format(moi_nhat.ndcg_at_10) }}</td><td>{{ "%.4f"|format(moi_nhat.map_at_10) }}</td>
+      <td>{{ "%.4f"|format(moi_nhat.coverage) }}</td><td>{{ "%.2f"|format(moi_nhat.novelty) }}</td></tr>
+    {% for ten, nhan in [("baseline_toan_san", "Baseline 1: bán chạy toàn sàn"), ("baseline_danh_muc", "Baseline 2: bán chạy theo danh mục")] %}
+    {% set b = ct.get(ten, {}) %}
+    <tr><td>{{ nhan }}</td>
+      {% for k in ["precision_at_10", "recall_at_10", "ndcg_at_10", "map_at_10", "coverage"] %}<td>{{ "%.4f"|format(b.get(k, 0)) }}</td>{% endfor %}
+      <td>{{ "%.2f"|format(b.get("novelty", 0)) }}</td></tr>
+    {% endfor %}
+    {% if ct.get("loc_tam_gia_v2") %}
+    {% set m = ct.get("loc_tam_gia_v2") %}
+    <tr><td>Mô hình v2: ALS + lọc theo tầm giá</td>
+      {% for k in ["precision_at_10", "recall_at_10", "ndcg_at_10", "map_at_10", "coverage"] %}<td>{{ "%.4f"|format(m.get(k, 0)) }}</td>{% endfor %}
+      <td>{{ "%.2f"|format(m.get("novelty", 0)) }}</td></tr>
+    {% endif %}
+    {% for beta, m in ct.get("xep_lai_novelty", {}).items() %}
+    <tr><td>ALS + xếp lại novelty (beta={{ beta }})</td>
+      {% for k in ["precision_at_10", "recall_at_10", "ndcg_at_10", "map_at_10", "coverage"] %}<td>{{ "%.4f"|format(m.get(k, 0)) }}</td>{% endfor %}
+      <td>{{ "%.2f"|format(m.get("novelty", 0)) }}</td></tr>
+    {% endfor %}
+  </table>
+  <h2>Phân phối độ phổ biến của item được gợi ý</h2>
+  <p class="mo">Trục ngang: 10 nhóm item theo độ phổ biến (1 = 10% phổ biến nhất). Không có popularity bias thì mỗi nhóm khoảng 10%.</p>
+  <div id="bd-pho-bien"></div>
+  {% else %}
+  <p>Chưa có lần huấn luyện nào trong <code>gold.lich_su_huan_luyen</code>.</p>
+  {% endif %}
+</section>
+<section class="hop">
+  <h2>Chỉ số theo phiên bản mô hình</h2>
+  <div id="bd-phien-ban"></div>
+  <table>
+    <tr><th>Thời điểm</th><th>Mô hình</th><th>Features v</th><th>NDCG@10</th><th>Precision@10</th><th>Coverage</th><th>Novelty</th><th>Tăng so baseline</th><th>Trạng thái</th></tr>
+    {% for d in lich_su %}
+    <tr><td>{{ d.thoi_diem }}</td><td>{{ d.phien_ban_mo_hinh }}</td><td>{{ d.phien_ban_features }}</td>
+      <td>{{ "%.4f"|format(d.ndcg_at_10) }}</td><td>{{ "%.4f"|format(d.precision_at_10) }}</td><td>{{ "%.4f"|format(d.coverage) }}</td>
+      <td>{{ "%.2f"|format(d.novelty) }}</td><td>{{ "%+.1f%%"|format((d.uplift_ndcg or 0) * 100) }}</td><td>{{ d.trang_thai }}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<section class="hop">
+  <h2>Bảng tuning của lần chạy mới nhất ({{ tuning|length }} tổ hợp)</h2>
+  <table>
+    <tr><th>rank</th><th>regParam</th><th>alpha</th><th>NDCG@10</th><th>Precision@10</th><th>Recall@10</th><th>MAP@10</th><th>Coverage</th><th>Novelty</th><th>Giây</th></tr>
+    {% for d in tuning|sort(attribute="ndcg_at_10", reverse=True) %}
+    <tr><td>{{ d.rank }}</td><td>{{ d.reg_param }}</td><td>{{ d.alpha }}</td><td>{{ "%.5f"|format(d.ndcg_at_10) }}</td>
+      <td>{{ "%.4f"|format(d.precision_at_10) }}</td><td>{{ "%.4f"|format(d.recall_at_10) }}</td><td>{{ "%.4f"|format(d.map_at_10) }}</td>
+      <td>{{ "%.4f"|format(d.coverage) }}</td><td>{{ "%.2f"|format(d.novelty) }}</td><td>{{ d.so_giay }}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<section class="hop">
+  <h2>OPTIMIZE / ZORDER trên truy vấn lấy gợi ý theo user</h2>
+  <table>
+    <tr><th>Giai đoạn</th><th>Số tệp của bảng</th><th>Tệp đọc mỗi truy vấn</th><th>Trung vị (ms)</th><th>p95 (ms)</th></tr>
+    {% for d in zorder %}
+    <tr><td>{{ d.giai_doan }}</td><td>{{ d.so_tep }}</td><td>{{ "%.2f"|format(d.tep_doc_trung_binh or 0) }}</td>
+      <td>{{ "%.0f"|format(d.trung_vi_ms or 0) }}</td><td>{{ "%.0f"|format(d.p95_ms or 0) }}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<script>
+const lichSu = {{ lich_su|tojson }};
+veDuong("bd-phien-ban", lichSu.map(d => d.phien_ban_mo_hinh), [
+  {ten: "NDCG@10", gia_tri: lichSu.map(d => d.ndcg_at_10)},
+  {ten: "Precision@10", gia_tri: lichSu.map(d => d.precision_at_10)},
+  {ten: "Coverage", gia_tri: lichSu.map(d => d.coverage)}], {dinhDang: v => v.toFixed(3)});
+{% if moi_nhat %}
+const pp = {{ moi_nhat.chi_tiet.get("phan_phoi_pho_bien", {})|tojson }};
+veCot("bd-pho-bien", ["1","2","3","4","5","6","7","8","9","10"],
+  Object.keys(pp).map(k => ({ten: k, gia_tri: pp[k]})), {dinhDang: v => (v * 100).toFixed(0) + "%"});
+{% endif %}
+</script>
+{% endblock %}

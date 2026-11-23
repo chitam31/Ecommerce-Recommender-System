@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block noi_dung %}
+<nav class="duong-dan"><a href="/{% if u %}?u={{ u }}{% endif %}">Trang chủ</a><span>›</span>{{ sp.nganh.ten }}<span>›</span>Danh mục {{ sp.ma_danh_muc or "chưa rõ" }}</nav>
+<section class="hop chi-tiet">
+  <div class="chi-tiet-anh"><img src="{{ sp.anh }}" alt="Ảnh minh họa: {{ sp.ten_hien_thi }}"></div>
+  <div class="chi-tiet-thong-tin">
+    <div class="nganh" style="color: {{ sp.nganh.mau_dam }}">{{ sp.nganh.ten }}</div>
+    <h1>{{ sp.ten_hien_thi }}</h1>
+    <div class="dong-phu">
+      Mã sản phẩm {{ sp.ma_san_pham }} · danh mục {{ sp.ma_danh_muc or "chưa rõ" }}
+      {% if sp.xep_hang_sao %}
+      {% set sao = (sp.xep_hang_sao|round|int) %}
+      · <span class="sao">{{ "★" * sao }}<span class="sao-rong">{{ "★" * (5 - sao) }}</span></span>
+        {{ "%.1f"|format(sp.xep_hang_sao) }} <span class="mo">(sao ước lượng)</span>
+      {% endif %}
+    </div>
+    <div class="gia-lon">{{ (sp.gia_san_pham|gia) or "Chưa có giá" }}</div>
+    {% if sp.con_hang is defined and sp.con_hang is not none %}
+    <div class="tinh-trang {{ 'con' if sp.con_hang else 'het' }}">{{ "Còn hàng" if sp.con_hang else "Tạm hết hàng" }}</div>
+    {% endif %}
+    {% if u %}
+    <div class="phien">Đang thao tác với tư cách <b>{{ u }}</b>{% if mh %} · đến từ impression <code>{{ mh[:8] }}</code>{% endif %}</div>
+    <div class="hang nut-hanh-dong">
+      <button class="nut-vien" onclick="guiSuKien('xem')">Xem chi tiết</button>
+      <button class="nut-cam" onclick="guiSuKien('them_gio')">Thêm vào giỏ</button>
+      <button class="nut-do" onclick="guiSuKien('mua')">Mua ngay</button>
+      <a class="nut nut-phu" href="/?u={{ u }}">Về trang chủ</a>
+    </div>
+    {% else %}
+    <p class="mo">Chưa đăng nhập: chọn người dùng ở trang chủ để gửi sự kiện.</p>
+    {% endif %}
+    <div id="ket-qua" class="ket-qua-su-kien"></div>
+    <div class="hop-nho">
+      <h3><span class="cham-nong"></span>Trạng thái trong bảng thịnh hành</h3>
+      <div id="thinh-hanh">
+        {% if thinh_hanh %}
+          Cửa sổ kết thúc {{ thinh_hanh.cua_so_ket_thuc }} (UTC) · xem {{ thinh_hanh.so_luot_xem }} · thêm giỏ {{ thinh_hanh.so_luot_them_gio }}
+        {% else %}Chưa có trong 15 phút gần nhất.{% endif %}
+      </div>
+      <div id="do-tre" class="do-tre"></div>
+      <p class="mo">Tự làm mới mỗi 5 giây; sau khi bấm "Thêm vào giỏ", trang ghi số giây tới khi bảng thịnh hành ghi nhận lần bấm (mục tiêu ≤ 90 giây).</p>
+    </div>
+  </div>
+</section>
+<section class="hop">
+  <div class="dau-muc">
+    <h2>Sản phẩm liên quan</h2>
+    <span class="mo">Được cùng người dùng xem trong cùng ngày, xếp theo độ tương đồng cosine</span>
+  </div>
+  <div class="luoi">
+    {% for g in lien_quan %}{% set vi_tri = loop.index %}{% include "_the_san_pham.html" %}{% endfor %}
+  </div>
+  {% if not lien_quan %}<p class="mo">Chưa có sản phẩm liên quan cho mã này.</p>{% endif %}
+</section>
+<script>
+const U = {{ (u or "")|tojson }}, MH = {{ (mh or "")|tojson }}, SP = {{ sp.ma_san_pham|tojson }};
+const PHUT = 60000, MUC_TIEU_GIAY = 90;
+const lucThemGio = [];  // luc_ms (đồng hồ máy chủ web) của mỗi lần "Thêm vào giỏ" trên trang này
+let cho = null;         // phép đo đang chờ: {bam, lucDau, batDau, canCo}
+let dangHoi = false;
+
+function gio(ms, coGiay) {
+  const kieu = coGiay ? {hour: "2-digit", minute: "2-digit", second: "2-digit"} : {hour: "2-digit", minute: "2-digit"};
+  return new Date(ms).toLocaleTimeString("vi-VN", kieu);
+}
+
+// Dòng cửa sổ 15 phút đang chạy: giờ đổi sang giờ của máy đang xem (bảng lưu theo UTC).
+function hienDong(d) {
+  const o = document.getElementById("thinh-hanh");
+  if (!d || d.so_luot_them_gio === undefined) { o.textContent = "Chưa có trong 15 phút gần nhất."; return; }
+  const khung = d.cua_so_bat_dau_ms
+    ? "Cửa sổ 15 phút " + gio(d.cua_so_bat_dau_ms) + " → " + gio(d.cua_so_ket_thuc_ms)
+    : "Cửa sổ kết thúc " + d.cua_so_ket_thuc;
+  o.textContent = khung + " · xem " + (d.so_luot_xem ?? 0) + " · thêm giỏ " + (d.so_luot_them_gio ?? 0);
+}
+
+function hienCho() {
+  if (!cho) return;
+  const s = Math.round((Date.now() - cho.bam) / 1000);
+  const el = document.getElementById("do-tre");
+  el.className = "do-tre cho";
+  el.textContent = "Đang chờ bảng thịnh hành ghi nhận lần bấm lúc " + gio(cho.lucDau, true) + "… " + s + " giây" +
+    (s > MUC_TIEU_GIAY ? " (quá 90 giây: kiểm tra luồng thịnh hành)" : "");
+}
+
+async function guiSuKien(loai) {
+  const r = await fetch("/api/su-kien", {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ma_nguoi_dung: U, ma_san_pham: SP, loai: loai, ma_hien_thi: MH || null})});
+  const d = await r.json();
+  document.getElementById("ket-qua").textContent =
+    "Đã đẩy sự kiện '" + loai + "' vào Kafka lúc " + new Date(d.luc_ms).toLocaleTimeString() +
+    " · tương tác trong phiên: " + d.so_tuong_tac_phien;
+  if (loai !== "them_gio") return;
+  const luc = d.luc_ms || Date.now();
+  lucThemGio.push(luc);
+  // Đo trên cửa sổ trượt bắt đầu ở phút của lần bấm: cửa sổ này chỉ chứa sự kiện từ phút đó trở đi,
+  // nên lượt thêm giỏ cũ (buổi tập trước, người khác) không làm sai phép đo. Lùi 10 giây vì Kafka
+  // đóng dấu giờ lúc gửi, sớm hơn luc_ms một chút.
+  const batDau = Math.floor((luc - 10000) / PHUT) * PHUT;
+  const canCo = lucThemGio.filter(t => t >= batDau + 10000).length;  // luôn gồm lần bấm này
+  // Bấm liền nhau (kịch bản: 3 lần trong ~2 giây) thì giữ mốc của lần đầu: số giây không bị đo ngắn đi.
+  const cungLoat = cho && Date.now() - cho.bam < 15000;
+  cho = {bam: cungLoat ? cho.bam : Date.now(), lucDau: cungLoat ? cho.lucDau : luc, batDau: batDau, canCo: canCo};
+  hienCho();
+}
+
+async function layDong(thamSo) {
+  try {
+    const r = await fetch("/api/thinh-hanh/" + encodeURIComponent(SP) + thamSo);
+    return r.ok ? await r.json() : null;
+  } catch (e) { return null; }
+}
+
+// Thăm dò mỗi 5 giây. Mỗi lần hỏi là một truy vấn Spark: lần trước chưa xong thì bỏ lượt, không chồng thêm.
+async function thamDo() {
+  if (dangHoi) return;
+  dangHoi = true;
+  try {
+    const c = cho;
+    if (c) {
+      const d = await layDong("?bat_dau_ms=" + c.batDau);
+      if (cho === c && d && (d.so_luot_them_gio || 0) >= c.canCo) {
+        const giay = Math.round((Date.now() - c.bam) / 1000);
+        cho = null;
+        const el = document.getElementById("do-tre");
+        el.className = "do-tre xong";
+        // Giữ nguyên tới lần bấm sau, để quay lại từ tab khác vẫn đọc được.
+        el.textContent = "ĐÃ CẬP NHẬT sau " + giay + " giây (bấm lúc " + gio(c.lucDau, true) +
+          "; mục tiêu ≤ 90 giây: " + (giay <= MUC_TIEU_GIAY ? "ĐẠT" : "CHƯA ĐẠT") + ")";
+      }
+    }
+    const d = await layDong("");
+    if (d) hienDong(d);
+  } finally {
+    dangHoi = false;
+  }
+}
+hienDong({{ (thinh_hanh or {})|tojson }});
+setInterval(thamDo, 5000); setInterval(hienCho, 1000); thamDo();
+</script>
+{% endblock %}

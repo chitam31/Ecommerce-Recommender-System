@@ -1,0 +1,1 @@
+[val] quy mô: {"phien_ban_features": 3, "phien_ban_silver": 10, "ngay_cat": "2015-08-19", "ngay_cuoi": "2015-09-18", "so_ngay_val": 15, "so_user_ca_thang": 9467, "so_user_val": 6505, "so_user_kiem_tra": 4215, "so_user_ca_hai_ky": 1253, "so_item_train": 126230}

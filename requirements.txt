@@ -1,0 +1,24 @@
+# Thư viện Python của dự án bd03_khuyen_nghi.
+# Dùng cho: chạy job Spark ở chế độ local, web giả lập sàn TMĐT, bộ phát Kafka và kiểm thử.
+#
+# Trên cụm KHÔNG cần cài tệp này: ảnh ha_tang/spark/Dockerfile đã có Spark 3.5.3, numpy và
+# jar Delta 3.2.0 + Kafka connector; ảnh ha_tang/web/Dockerfile cài sẵn thư viện của web.
+# Delta Lake được gọi hoàn toàn qua Spark SQL nên không cần gói Python delta-spark.
+
+# Phải trùng phiên bản với apache/spark:3.5.3 của cụm
+pyspark==3.5.3
+# pyspark.ml (ALS, StringIndexer) import numpy ngay khi nạp
+numpy>=1.21
+
+# Web (mục 3.8)
+fastapi>=0.115
+uvicorn>=0.30
+jinja2>=3.1
+
+# Bộ phát Kafka và web đẩy sự kiện vào Kafka
+kafka-python>=2.0.2
+
+# Kiểm thử
+pytest>=7.4
+httpx>=0.27
+pyflakes>=3.0

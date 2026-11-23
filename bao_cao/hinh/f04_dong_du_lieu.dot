@@ -1,0 +1,74 @@
+// Dòng dữ liệu cấp bảng: job (hộp) và bảng (trụ). Cạnh lấy từ các lệnh doc_delta / ghi_delta
+// / MERGE trong jobs/; nét đứt = đọc phụ (thuộc tính, phiên bản, cập nhật trạng thái).
+digraph G {
+  graph [rankdir=TB, fontname="Liberation Serif", nodesep=0.12, ranksep=0.22, splines=true, pad=0.12, newrank=true];
+  node  [fontname="Liberation Serif", fontsize=14, margin="0.06,0.03", height=0.3, penwidth=1.0, color="#1F1F1F"];
+  edge  [color="#1F1F1F", arrowsize=0.7, penwidth=1.0, fontname="Liberation Serif Italic", fontsize=12];
+
+  node [shape=cylinder, style=filled];
+  csv  [label="landing CSV\n(HDFS /lake/landing)", fillcolor="#F2F2F2"];
+  kev  [label="Kafka\nretailrocket-events", fillcolor="#DCE5F0"];
+  khi  [label="Kafka\nhien-thi", fillcolor="#DCE5F0"];
+  br   [label="bronze.su_kien", fillcolor="#EADBCB"];
+  svt  [label="silver.tuong_tac", fillcolor="#E6E6E6"];
+  svp  [label="silver.san_pham", fillcolor="#E6E6E6"];
+  ft   [label="features.\nma_tran_tuong_tac", fillcolor="#E2E1EE"];
+  tk   [label="gold.\nthong_ke_san_pham", fillcolor="#F1E7C2"];
+  lq   [label="gold.\nsan_pham_lien_quan", fillcolor="#F1E7C2", penwidth=1.8];
+  tun  [label="gold.ket_qua_tuning", fillcolor="#F1E7C2"];
+  ls   [label="gold.\nlich_su_huan_luyen", fillcolor="#F1E7C2"];
+  gat  [label="gold.goi_y_als_tam", fillcolor="#F6F0D8"];
+  gt   [label="gold.goi_y_tam", fillcolor="#F6F0D8"];
+  gg   [label="gold.\ngoi_y_nguoi_dung", fillcolor="#F1E7C2", penwidth=1.8];
+  th   [label="gold.thinh_hanh_15p", fillcolor="#F1E7C2", penwidth=1.8];
+  nk   [label="gold.\nnhat_ky_hien_thi (CDF)", fillcolor="#F1E7C2", penwidth=1.8];
+  ab   [label="gold.ket_qua_ab", fillcolor="#F1E7C2", penwidth=1.8];
+  tl   [label="gold.ket_qua_tai_lap", fillcolor="#F1E7C2"];
+
+  node [shape=folder, style=filled, fillcolor="#FFFFFF"];
+  idx  [label="models/\nuser_indexer, item_indexer"];
+  als  [label="models/als/<run>\n(best of the grid)"];
+  alp  [label="models/als/<run>_phuc_vu\n(serving model)"];
+
+  node [shape=box, style=filled, fillcolor="#FFFFFF"];
+  j_dm [label="nhap_danh_muc"];
+  j_nap[label="nap_su_kien ⟳", fillcolor="#E1ECDD"];
+  j_bs [label="bronze_to_silver"];
+  j_tk [label="thong_ke_san_pham"];
+  j_lq [label="san_pham_lien_quan"];
+  j_cb [label="chuan_bi_ma_tran"];
+  j_hl [label="huan_luyen_als"];
+  j_dg [label="danh_gia"];
+  j_sg [label="sinh_goi_y_toan_bo"];
+  j_tr [label="tron_goi_y"];
+  j_gg [label="ghi_gold (MERGE)\nalso marks the run as\ndeployed in lich_su_huan_luyen"];
+  j_th [label="tinh_thinh_hanh ⟳", fillcolor="#E1ECDD"];
+  j_ht [label="ghi_hien_thi ⟳", fillcolor="#E1ECDD"];
+  j_mp [label="mo_phong_hien_thi\n(simulated traffic)"];
+  j_ab [label="tinh_ket_qua_ab"];
+  j_tl [label="tai_lap_huan_luyen\n(VERSION AS OF)"];
+  j_ev [label="tien_hoa_luoc_do\n(schema evolution)", fillcolor="#F0DEDC"];
+
+  csv -> j_dm -> svp;
+  kev -> j_nap -> br; svp -> j_nap [style=dashed, label=" category"];
+  br -> j_bs -> svt;
+  svt -> j_tk -> tk; svp -> j_tk [style=dashed];
+  svt -> j_lq -> lq;
+  svt -> j_cb; j_cb -> ft; j_cb -> idx;
+  ft -> j_hl; j_hl -> tun; j_hl -> als;
+  tun -> j_dg; ft -> j_dg; als -> j_dg; j_dg -> ls;
+  ls -> j_sg [label=" params"]; ft -> j_sg; idx -> j_sg; j_sg -> alp; j_sg -> gat;
+  gat -> j_tr; tk -> j_tr; th -> j_tr; svp -> j_tr; svt -> j_tr; alp -> j_tr [style=dashed];
+  ls -> j_tr [style=dashed, label=" v1/v2"];
+  j_tr -> gt -> j_gg -> gg;
+  kev -> j_th -> th; tk -> j_th [style=dashed, label=" mean 24 h"];
+  khi -> j_ht -> nk; gg -> j_mp -> nk; svt -> j_mp [style=dashed];
+  nk -> j_ab [label=" CDF"]; j_ab -> ab;
+  ft -> j_tl [label=" version v"]; ls -> j_tl; j_tl -> tl;
+  tk -> j_ev [style=dashed, label=" stars"]; j_ev -> svt [style=dashed]; j_ev -> svp [style=dashed];
+  {rank=same; csv; kev; khi;}
+  {rank=same; j_tk; j_lq; j_cb;}
+  {rank=same; j_th; j_sg;}
+  {rank=same; th; gat;}
+  {rank=same; gg; nk;}
+}

@@ -1,0 +1,68 @@
+# HDFS của nhóm. Đặt name: hadoop-cluster để giữ đúng tên volume cũ
+# (hadoop-cluster_namenode_data, hadoop-cluster_worker_data), không mất dữ liệu đã có.
+# Nếu máy đang chạy từ thư mục hadoop-custom thì đặt COMPOSE_PROJECT_NAME=hadoop-custom.
+name: ${COMPOSE_PROJECT_NAME:-hadoop-cluster}
+
+services:
+  master:
+    image: apache/hadoop:3.5.0
+    container_name: hadoop-master
+    hostname: master
+    user: root
+    environment:
+      HDFS_NAMENODE_USER: root
+      HDFS_SECONDARYNAMENODE_USER: root
+      NODE_IP: ${NODE_IP:-10.68.71.113}
+      # Máy chỉ có 7 GB RAM: chặn heap thay vì để JVM tự lấy 1/4 RAM.
+      HADOOP_HEAPSIZE_MAX: 1g
+      # Mã băm của config/*.xml (khoi_dong_may.sh tính): XML đổi thì compose tự tạo lại container.
+      CAU_HINH_HDFS: ${CAU_HINH_HDFS:-}
+      HE_SO_SAO_CHEP: ${HE_SO_SAO_CHEP:-2}
+    command: >
+      bash -c "
+        mkdir -p /tmp/hadoop-root/dfs/name &&
+        if [ ! -d /tmp/hadoop-root/dfs/name/current ]; then
+          hdfs namenode -format -force;
+        fi &&
+        hdfs namenode
+      "
+    ports:
+      - "9870:9870"
+      - "8020:8020"
+    volumes:
+      - namenode_data:/tmp/hadoop-root/dfs/name
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+    restart: unless-stopped
+
+  worker:
+    image: apache/hadoop:3.5.0
+    container_name: hadoop-worker
+    hostname: worker
+    user: root
+    environment:
+      HDFS_DATANODE_USER: root
+      # hdfs-site.xml đọc biến này qua ${env.NODE_IP}: mỗi DataNode tự khai báo IP ZeroTier của nó.
+      NODE_IP: ${NODE_IP:?Thieu NODE_IP}
+      HADOOP_HEAPSIZE_MAX: 1g
+      CAU_HINH_HDFS: ${CAU_HINH_HDFS:-}
+      HE_SO_SAO_CHEP: ${HE_SO_SAO_CHEP:-2}
+    command: >
+      bash -c "
+        mkdir -p /tmp/hadoop-root/dfs/data &&
+        chmod 755 /tmp/hadoop-root/dfs/data &&
+        hdfs datanode
+      "
+    ports:
+      - "9864:9864"
+      - "9866:9866"
+      - "9867:9867"
+    volumes:
+      - worker_data:/tmp/hadoop-root/dfs/data
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+    restart: unless-stopped
+
+volumes:
+  namenode_data:
+  worker_data:

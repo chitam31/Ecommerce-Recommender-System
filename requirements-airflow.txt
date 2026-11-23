@@ -1,0 +1,8 @@
+# Chỉ cần khi chạy tests/test_ha_tang.py (nạp 5 DAG bằng DagBag) ngoài container.
+# Trên cụm, Airflow chạy bằng ảnh ha_tang/airflow/Dockerfile (apache/airflow:3.3.1-python3.11).
+# Nên cài trong venv riêng; nếu pip báo xung đột, dùng tệp ràng buộc chính thức:
+#   pip install -r requirements-airflow.txt \
+#     --constraint https://raw.githubusercontent.com/apache/airflow/constraints-3.3.1/constraints-3.11.txt
+apache-airflow==3.3.1
+pyspark==3.5.3
+pytest>=7.4

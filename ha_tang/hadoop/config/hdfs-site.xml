@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Một tệp dùng chung cho NameNode và mọi DataNode, thay cho hai tệp cũ. -->
+<configuration>
+    <!-- Địa chỉ NameNode mà DataNode và client dùng để kết nối, phải khớp fs.defaultFS.
+         Tệp này dùng chung cho NameNode và DataNode: KHÔNG được để 0.0.0.0 ở đây, nếu không
+         DataNode sẽ đi tìm NameNode tại 0.0.0.0:8020 (lỗi gặp ngày 10/11/2026). -->
+    <property>
+        <name>dfs.namenode.rpc-address</name>
+        <value>10.68.71.113:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address</name>
+        <value>10.68.71.113:9870</value>
+    </property>
+    <!-- NameNode chạy trong container mạng bridge, không có IP ZeroTier bên trong: lắng nghe
+         mọi giao diện, còn địa chỉ quảng bá vẫn là hai dòng trên. -->
+    <property>
+        <name>dfs.namenode.rpc-bind-host</name>
+        <value>0.0.0.0</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-bind-host</name>
+        <value>0.0.0.0</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///tmp/hadoop-root/dfs/data</value>
+    </property>
+
+    <!-- Bản cũ ghi cứng 10.68.71.113 (IP của master) nên client không tìm đúng DataNode. -->
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${env.NODE_IP}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>0.0.0.0:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>0.0.0.0:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>0.0.0.0:9864</value>
+    </property>
+
+    <!-- Các địa chỉ ZeroTier không có DNS ngược, NameNode không được từ chối vì lý do này. -->
+    <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.client.use.datanode.hostname</name>
+        <value>true</value>
+    </property>
+
+    <!-- Số bản sao lấy từ HE_SO_SAO_CHEP trong cau_hinh/cum.env (2 khi mạng nối thẳng,
+         1 khi ZeroTier phải đi đường chuyển tiếp). -->
+    <property>
+        <name>dfs.replication</name>
+        <value>${env.HE_SO_SAO_CHEP}</value>
+    </property>
+    <!-- Mạng riêng ZeroTier của lớp: container Spark chạy user spark vẫn ghi được /lake. -->
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <!-- Cụm nối qua Wi-Fi + ZeroTier: một máy có thể khựng vài chục giây (đổi đường đi, sóng yếu).
+         Chờ đọc/ghi DataNode 3 phút thay vì 60 giây (đọc) / 8 phút (ghi) mặc định trước khi bỏ máy đó. -->
+    <property>
+        <name>dfs.client.socket-timeout</name>
+        <value>180000</value>
+    </property>
+</configuration>

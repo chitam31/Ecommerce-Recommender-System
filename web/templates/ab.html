@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block noi_dung %}
+<section class="hop">
+  <h1>Bảng điều khiển A/B</h1>
+  <p>Nhóm A: ALS thuần · Nhóm B: ALS trộn 30% thịnh hành. Phân nhóm bằng hash <code>ma_nguoi_dung</code>, ổn định theo người dùng.
+  Chỉ tính lượt hiển thị của user có gợi ý ALS.</p>
+  {% set A = tong.theo_nhom.get("A") %}{% set B = tong.theo_nhom.get("B") %}
+  <table>
+    <tr><th>Nhóm</th><th>Hiển thị</th><th>Click</th><th>Mua</th><th>CTR</th><th>Tỷ lệ chuyển đổi</th><th>Tỷ lệ traffic mô phỏng</th></tr>
+    {% for ten, t in tong.theo_nhom.items()|sort %}
+    <tr><td class="nhom-{{ ten }}">{{ ten }}</td><td>{{ t.so_hien_thi }}</td><td>{{ t.so_click }}</td><td>{{ t.so_mua }}</td>
+      <td>{{ "%.4f"|format(t.ctr or 0) }}</td><td>{{ "%.4f"|format(t.ty_le_chuyen_doi or 0) }}</td>
+      <td>{{ "%.0f%%"|format((t.ty_le_mo_phong or 0) * 100) }}</td></tr>
+    {% endfor %}
+  </table>
+  <div class="ket-luan">
+    <p><b>CTR:</b> p-value = {{ "%.4g"|format(tong.p_value) if tong.p_value is not none else "chưa đủ dữ liệu" }} → {{ tong.ket_luan }}
+    {% if tong.chenh_lech_ctr_tuong_doi is defined %} (B so với A: {{ "%+.1f%%"|format(tong.chenh_lech_ctr_tuong_doi * 100) }}){% endif %}</p>
+    <p><b>Chuyển đổi:</b> p-value = {{ "%.4g"|format(tong.p_value_chuyen_doi) if tong.p_value_chuyen_doi is not none else "chưa đủ dữ liệu" }} → {{ tong.ket_luan_chuyen_doi }}</p>
+    {% if tong.co_mau_can_thiet_moi_nhom is defined %}
+    <p class="mo">Để phát hiện mức tăng CTR 10% (alpha 5%, power 80%) cần khoảng {{ "{:,}".format(tong.co_mau_can_thiet_moi_nhom) }} lượt hiển thị mỗi nhóm.</p>
+    {% endif %}
+    <p class="mo">Kiểm định z hai tỷ lệ, hai phía, độ lệch chuẩn gộp. Traffic có nhãn "mo_phong" sinh bởi
+      <code>transform/mo_phong_hien_thi.py</code> theo mô hình phụ thuộc vị trí và độ liên quan (mục 3.10).</p>
+  </div>
+</section>
+<section class="hop">
+  <h2>CTR theo ngày</h2>
+  <div id="bd-ctr"></div>
+  <table>
+    <tr><th>Ngày</th><th>Nhóm</th><th>Hiển thị</th><th>Click</th><th>Mua</th><th>CTR</th><th>Chuyển đổi</th><th>p-value (CTR)</th><th>Phiên bản Delta</th></tr>
+    {% for d in dong %}
+    <tr><td>{{ d.ngay }}</td><td class="nhom-{{ d.nhom_ab }}">{{ d.nhom_ab }}</td><td>{{ d.so_hien_thi }}</td><td>{{ d.so_click }}</td><td>{{ d.so_mua }}</td>
+      <td>{{ "%.4f"|format(d.ctr) }}</td><td>{{ "%.4f"|format(d.ty_le_chuyen_doi) }}</td>
+      <td>{{ "%.4g"|format(d.p_value) if d.p_value is not none else "-" }}</td><td>{{ d.phien_ban_delta_du_lieu }}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<script>
+const dong = {{ dong|tojson }};
+const ngay = [...new Set(dong.map(d => d.ngay))].sort();
+const chuoi = ["A", "B"].map(n => ({ten: "Nhóm " + n, gia_tri: ngay.map(x => {
+  const d = dong.find(r => r.ngay === x && r.nhom_ab === n); return d ? d.ctr : null; })}));
+veDuong("bd-ctr", ngay, chuoi, {dinhDang: v => (v * 100).toFixed(2) + "%"});
+</script>
+{% endblock %}

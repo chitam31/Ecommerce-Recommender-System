@@ -1,0 +1,23 @@
+# Web chạy trên máy labsoe-18 (10.68.71.149), cùng LAN với cụm. Mở http://10.68.71.149:8000 từ bất kỳ máy nào
+# trong ZeroTier; từ ngoài trường: ssh -N -L 8001:localhost:8000 labsoe-18 rồi mở http://localhost:8001.
+# Khởi động (từ thư mục gốc dự án):  docker compose -f ha_tang/web/docker-compose.yml up -d --build
+name: bd03-web
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: ha_tang/web/Dockerfile
+    image: bd03/web:1.0
+    container_name: bd03-web
+    # host network: Spark driver cục bộ cần nói chuyện trực tiếp với các DataNode qua ZeroTier.
+    network_mode: host
+    environment:
+      WEB_CHE_DO: ${WEB_CHE_DO:-delta}
+      HDFS_GOC: ${HDFS_GOC:-hdfs://10.68.71.113:8020}
+      KAFKA_BROKER: ${KAFKA_BROKER:-10.68.71.204:9092}
+      SPARK_LOCAL_IP: ${NODE_IP:-10.68.71.149}
+      AIRFLOW_URL: ${AIRFLOW_URL:-http://10.68.71.113:8088}
+      AIRFLOW_USER: ${AIRFLOW_USER:-admin}
+      AIRFLOW_PASS: ${AIRFLOW_PASS:-}
+    restart: unless-stopped
