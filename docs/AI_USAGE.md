@@ -12,7 +12,6 @@ Mục A.9 của đề cương cho phép dùng mã do AI sinh nếu ghi rõ hai �
 | Thời gian | 01/10/2026 – 16/11/2026 |
 | Vai trò của AI | Hướng dẫn kỹ thuật và **sinh kiểm thử, gen ra slide** |
 | Vai trò của nhóm | Cung cấp đề cương, mã và cấu hình cụm của nhóm; dựng và vận hành cụm 6 máy lab qua ZeroTier; chạy mọi job, DAG, luồng trên cụm thật; gửi log và ảnh lỗi để AI sửa; ra quyết định triển khai; kiểm chứng kết quả; trình bày và bảo vệ |
-| Lịch sử Git | Commit do AI tạo có tác giả `Claude` và/hoặc dòng `Co-Authored-By: Claude ...`. |
 | Nguồn số liệu | Mọi số liệu trong báo cáo, slide và README (số sự kiện, metric mô hình, A/B, Z-ORDER, độ trễ...) lấy từ các lần chạy thật trên cụm, in ra bởi job Spark (dòng JSON cuối), `jobs/kiem_tra/xuat_ket_qua.py` hoặc `scripts/thu_bang_chung.sh`. AI chỉ trình bày lại, không tạo số liệu |
 
 ## 2. Cách làm việc với AI
@@ -28,7 +27,6 @@ Mục A.9 của đề cương cho phép dùng mã do AI sinh nếu ghi rõ hai �
 |---|---|---|
 | `jobs/` (PySpark: bảo trì và kiểm tra) | Gần toàn bộ | Phát triển từ job bronze cũ của nhóm (`nap_su_kien_bronze.py`) |
 | `web/` (FastAPI, Jinja2, giao diện) | Toàn bộ | Chart.js 4.6.1 trong `web/static/vendor/` là thư viện mã nguồn mở (giấy phép MIT), không do AI viết |
-| `ha_tang/` (Docker compose, Dockerfile, submit.sh) | Rà soát dựa trên nền cấu hình của nhóm | Giữ tên container, volume, cổng của repo nhóm |
 | `tests/` | Toàn bộ | |
 | `docs/`, `README.md`, `MO_HINH.md`, `NHAT_KY.md`, `notebooks/` | Toàn bộ | NHAT_KY ghi lại kết quả các lần chạy do nhóm thực hiện |
 | `slide/`  | Toàn bộ | Ảnh chụp màn hình web, Spark UI, Airflow lấy từ hệ thống thật |
@@ -66,4 +64,3 @@ Mục A.9 yêu cầu nhóm giải thích được mọi dòng mã. Tài liệu h
 - `docs/KIEN_TRUC.md`: kiến trúc, đặc tả bảng, lý do từng quyết định thiết kế.
 - `MO_HINH.md`: thẻ mô hình và cơ sở lý thuyết.
 - Docstring và chú thích tiếng Việt ở đầu mỗi job, DAG và script.
-- `docs/CHUAN_BI_BAO_VE.md` và `bao_cao/hoi_dap/`: câu hỏi phản biện kèm đáp án (gồm các câu mẫu mục C.5).
